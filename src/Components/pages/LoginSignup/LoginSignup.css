@@ -1,16 +1,15 @@
-.container{
+.container {
     display: flex;
     flex-direction: column;
     margin: auto;
-    margin-top: 10px;
-    width: 50vw;  /* El ancho ahora es relativo al tamaño de la pantalla (40% del viewport width) */
+    width: 50vw;  /* El ancho es del 50% del viewport */
     height: 100vh;  /* Ocupa toda la altura de la pantalla */
-    background: rgba(255, 255, 255, 0.8);  /* Fondo blanco con transparencia */
+    background: rgba(255, 255, 255, 0.6);  /* Fondo blanco con más transparencia */
     padding: 30px;
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0;
-    transform: translateY(-50%);
+    transform: none;  /* Elimina la traslación vertical */
     min-height: 300px; /* Asegura un mínimo de altura */
 }
 
@@ -23,92 +22,93 @@
 
 @media (max-width: 768px) {
     .container {
-        width: 80vw;  /* Aumenta el ancho para pantallas más pequeñas */
+        width: 70vw;  /* Aumenta el ancho para pantallas más pequeñas */
     }
 }
 
 @media (max-width: 480px) {
     .container {
-        width: 90vw;  /* Aumenta aún más para pantallas móviles */
+        width: 85vw;  /* Aumenta aún más para pantallas móviles */
     }
 }
+
 .enter-container {
     display: flex;
     flex-direction: column;  /* Alinea los botones verticalmente */
     align-items: center;     /* Céntralos horizontalmente */
-    gap: 20px;               /* Añade un espacio entre los botones */
-    margin-top: 30px;
+    gap: 15px;               /* Reduce el espacio entre los botones */
+    margin-top: 20px;
 }
 
 .header{
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 9px;
+    gap: 5px;
     width: 100%; 
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .logo{
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 60px;
-    margin-bottom: 70px;
+    margin-top: 40px;
+    margin-bottom: 50px;
     color: red;
-    font-size: 70px;
+    font-size: 50px; /* Reduce el tamaño de la fuente */
     font-weight: 700;
 }
 
 .text{
     color: #3c009d;
-    font-size: 48px;
+    font-size: 36px; /* Reduce el tamaño de la fuente */
     font-weight: 700;
 }
 
 .underline{
-    width: 61px;
-    height: 6px;
+    width: 50px; /* Reduce el tamaño de la subrayado */
+    height: 5px;
     background: #3c009d;
     border-radius: 9px;
 }
 
 .inputs{
-    margin-top: 55px;
+    margin-top: 30px;
     display: flex;
     flex-direction: column ;    
-    gap: 25px;
+    gap: 15px;
 }
 
 .input{
     display: flex;
     align-items: center;
     margin: auto;
-    width: 480px;
-    height: 80px;
+    width: 380px; /* Reduce el ancho del input */
+    height: 60px; /* Reduce la altura del input */
     background: #eaeaea;
     border-radius: 6px;
 }
 
 .input img{
-    margin: 0px 30px;
+    margin: 0px 20px;
 }
 
 .input input{
-    height: 50px;
-    width: 400px;
+    height: 40px;
+    width: 320px; /* Ajusta el tamaño del input */
     background: transparent;
     border: none;
     outline: none;
     color: #797979;
-    font-size: 19px;
+    font-size: 16px; /* Reduce el tamaño de la fuente */
 }
 
 .forgot-password{
-    padding-left: 500px;
-    margin-top: 27px;
+    padding-left: 380px; /* Ajusta el padding */
+    margin-top: 20px;
     color: #797979;
-    font-size: 18px;
+    font-size: 16px; /* Reduce el tamaño de la fuente */
 }
 
 .forgot-password span{
@@ -117,38 +117,35 @@
 }
 
 .submit-container {
-    position: absolute; /* Saca los botones del flujo normal */
-    top: 20px; /* Coloca los botones en la parte superior */
-    right: 20px; /* Alinea los botones al borde derecho */
+    position: absolute;
+    top: 20px;
+    right: 20px;
     display: flex;
-    gap: 15px; /* Espaciado entre los botones */
+    gap: 10px; /* Reduce el espaciado entre los botones */
 }
-.submit{
+
+.submit, .enter{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 220px;
-    height: 59px;
-    color: #fff;
+    width: 180px; /* Reduce el ancho del botón */
+    height: 50px; /* Reduce la altura del botón */
+    font-size: 16px; /* Ajusta el tamaño de la fuente */
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.submit {
     background: #4c00b4;
-    border-radius: 50px;
-    font-size: 19px;
-    font-weight: 700;
-    cursor: pointer;
-}
-.enter{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 220px;
-    height: 59px;
     color: #fff;
-    background: red;
-    border-radius: 50px;
-    font-size: 19px;
-    font-weight: 700;
-    cursor: pointer;
 }
+
+.enter {
+    background: red;
+    color: #fff;
+}
+
 .gray{
     background: #EAEAEA;
     color: #676767;
