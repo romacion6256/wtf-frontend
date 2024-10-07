@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import 'boxicons/css/boxicons.min.css'; // Importa Boxicons
+import 'boxicons/css/boxicons.min.css'; 
 
 const Layout = ({ children }) => {
     // const [profileOpen, setProfileOpen] = useState(false);

@@ -1,12 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
-import LoginSignup from './components/pages/LoginSignup/LoginSignup';
-import MainCine from './components/pages/MainCine';
-import Cartelera from './components/pages/Cartelera';
-import MisReservas from './components/pages/MisReservas'
-import ReservaAsientos from './components/pages/ReservaAsientos';
-import SidebarAdmin from './components/pages/SidebarAdmin';
+import LoginSignup from './Components/pages/LoginSignup/LoginSignup';
+import MainCine from './Components/pages/MainCine';
+import Cartelera from './Components/pages/Cartelera';
+import MisReservas from './Components/pages/MisReservas'
+import ReservaAsientos from './Components/pages/ReservaAsientos';
+import SidebarAdmin from './Components/pages/SidebarAdmin';
 // import AgregarAdmin from './Components/pages/AgregarAdmin';
 
 const App = () => {
