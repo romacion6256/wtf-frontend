@@ -7,6 +7,7 @@ import Cartelera from './Components/pages/Cartelera';
 import MisReservas from './Components/pages/MisReservas'
 import ReservaAsientos from './Components/pages/ReservaAsientos';
 import SidebarAdmin from './Components/pages/SidebarAdmin';
+import AgregarPelicula from "./Components/pages/AgregarPelicula";
 // import AgregarAdmin from './Components/pages/AgregarAdmin';
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/reservaasientos" element={<ReservaAsientos/>} />
           <Route path="/admin" element={<SidebarAdmin />} />
           {/* <Route path="/agregaradmin" element={<AgregarAdmin />} /> */}
+          <Route path="/agregarpelicula" element={<AgregarPelicula />} />
         </Routes>
       </Router>
   );

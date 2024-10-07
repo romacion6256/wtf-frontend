@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from './Layout'; // Asegúrate de que la ruta sea correcta
+import Layout from './Layout';
 import 'boxicons/css/boxicons.min.css'; // Importa Boxicons
 
 const MisReservas = () => {
