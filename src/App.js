@@ -8,6 +8,8 @@ import MisReservas from './Components/pages/MisReservas'
 import ReservaAsientos from './Components/pages/ReservaAsientos';
 import SidebarAdmin from './Components/pages/SidebarAdmin';
 import AgregarPelicula from "./Components/pages/AgregarPelicula";
+import AgregarFuncion from "./Components/pages/AgregarFuncion";
+import AgregarSnack from "./Components/pages/AgregarSnack";
 // import AgregarAdmin from './Components/pages/AgregarAdmin';
 
 const App = () => {
@@ -22,6 +24,8 @@ const App = () => {
           <Route path="/admin" element={<SidebarAdmin />} />
           {/* <Route path="/agregaradmin" element={<AgregarAdmin />} /> */}
           <Route path="/agregarpelicula" element={<AgregarPelicula />} />
+          <Route path="/agregarfuncion" element={<AgregarFuncion />} />
+          <Route path="/agregarsnack" element={<AgregarSnack />} />
         </Routes>
       </Router>
   );
