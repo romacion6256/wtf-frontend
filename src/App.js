@@ -10,6 +10,7 @@ import SidebarAdmin from './Components/pages/SidebarAdmin';
 import AgregarPelicula from "./Components/pages/AgregarPelicula";
 import AgregarFuncion from "./Components/pages/AgregarFuncion";
 import AgregarSnack from "./Components/pages/AgregarSnack";
+import MisDatos from "./Components/pages/MisDatos";
 // import AgregarAdmin from './Components/pages/AgregarAdmin';
 
 const App = () => {
@@ -26,6 +27,8 @@ const App = () => {
           <Route path="/agregarpelicula" element={<AgregarPelicula />} />
           <Route path="/agregarfuncion" element={<AgregarFuncion />} />
           <Route path="/agregarsnack" element={<AgregarSnack />} />
+          <Route path="/misdatos" element={<MisDatos />} />
+
         </Routes>
       </Router>
   );

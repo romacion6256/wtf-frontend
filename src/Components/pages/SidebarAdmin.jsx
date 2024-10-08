@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import 'boxicons/css/boxicons.min.css'; // Importa Boxicons
 
 const SidebarAdmin = ({ children }) => {
-    // const [profileOpen, setProfileOpen] = useState(false);
+    
     const [asideOpen, setAsideOpen] = useState(true);
+    const [profileOpen, setProfileOpen] = useState(false);
 
-    // const toggleProfile = () => setProfileOpen(!profileOpen);
     const toggleAside = () => setAsideOpen(!asideOpen);
+    const toggleProfile = () => setProfileOpen(!profileOpen);
 
     return (
         <main className="min-h-screen w-full bg-gray-100 text-gray-700">
@@ -25,7 +26,16 @@ const SidebarAdmin = ({ children }) => {
                     <button className="flex items-center">
                         <span className="font-medium ml-2">Admin Name</span>
                     </button>
-                    
+                    {profileOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+                            <a
+                                href="/misdatos"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                                Mis Datos
+                            </a>
+                        </div>
+                    )}
                 </div>
             </header>
 
