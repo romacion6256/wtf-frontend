@@ -4,10 +4,13 @@ import "./LoginSignup.css"
 import user_icon from "../../Assets/person.png"
 import email_icon from "../../Assets/email.png"
 import password_icon from '../../Assets/password.png'
+import eye_icon_open from "../../Assets/eyeopen.png"; 
+import eye_icon_closed from "../../Assets/eyeclosed.png"; 
 
 const LoginSignup = () => {
 
     const[action,setAction] = useState("Log In");
+    const [showPassword, setShowPassword] = useState(false); 
 
     return (
         <div className="login-signup-container">
@@ -38,7 +41,17 @@ const LoginSignup = () => {
 
                 <div className="input">
                     <img src={password_icon} alt="" />
-                    <input type="password" placeholder="Contraseña"/>
+                    <input
+                            type={showPassword ? "text" : "password"} // Cambia el tipo de input según el estado
+                            placeholder="Contraseña"
+                        />
+                        <img
+                            src={showPassword ? eye_icon_open : eye_icon_closed} // Muestra el icono según el estado
+                            alt="toggle visibility"
+                            onClick={() => setShowPassword(!showPassword)} // Alterna la visibilidad de la contraseña
+                            className="eye-icon"
+                            style={{ cursor: 'pointer', marginLeft: '8px' }} // Agrega estilo para que se vea bien
+                        />
                 </div>
                 </div>
                 {action==="Sign Up"?<div></div>:<div className="forgot-password"><span>Olvide mi contrasena </span></div>}

@@ -31,7 +31,11 @@
         width: 85vw;  /* Aumenta aún más para pantallas móviles */
     }
 }
-
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
 .enter-container {
     display: flex;
     flex-direction: column;  /* Alinea los botones verticalmente */
