@@ -11,7 +11,7 @@ import AgregarPelicula from "./Components/pages/AgregarPelicula";
 import AgregarFuncion from "./Components/pages/AgregarFuncion";
 import AgregarSnack from "./Components/pages/AgregarSnack";
 import MisDatos from "./Components/pages/MisDatos";
-// import AgregarAdmin from './Components/pages/AgregarAdmin';
+import AgregarAdmin from './Components/pages/AgregarAdmin';
 
 const App = () => {
   return (
@@ -23,7 +23,7 @@ const App = () => {
           <Route path="/misreservas" element={<MisReservas/>} />
           <Route path="/reservaasientos" element={<ReservaAsientos/>} />
           <Route path="/admin" element={<SidebarAdmin />} />
-          {/* <Route path="/agregaradmin" element={<AgregarAdmin />} /> */}
+          <Route path="/agregaradmin" element={<AgregarAdmin />} />
           <Route path="/agregarpelicula" element={<AgregarPelicula />} />
           <Route path="/agregarfuncion" element={<AgregarFuncion />} />
           <Route path="/agregarsnack" element={<AgregarSnack />} />

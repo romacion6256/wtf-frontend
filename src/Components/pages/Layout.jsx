@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
 
                 {/* Nombre de usuario */}
                 <div className="relative flex items-center space-x-2">
-                    <button className="flex items-center">
+                    <button className="flex items-center" onClick={toggleProfile}>
                         <span className="font-medium ml-2">User Name</span>
                     </button>
                     {profileOpen && (
@@ -42,7 +42,7 @@ const Layout = ({ children }) => {
             <div className="flex">
                 {/* Barra lateral */}
                 {asideOpen && (
-                    <aside className="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" style={{ height: "90.5vh" }}>
+                    <aside className="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" style={{ height: "100vh" }}>
                         <a href="cartelera" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
                             <span className="text-2xl"><i className="bx bx-home"></i></span>
                             <span>Cartelera</span>
