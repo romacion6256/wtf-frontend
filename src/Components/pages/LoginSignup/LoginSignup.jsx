@@ -12,7 +12,7 @@ import eye_icon_closed from "../../Assets/eyeclosed.png";
 
 const LoginSignup = () => {
 
-    const[action,setAction] = useState("Log In");
+    const [action,setAction] = useState("Log In");
     const [showPassword, setShowPassword] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertType, setAlertType] = useState("");
@@ -81,6 +81,56 @@ const LoginSignup = () => {
         }
       };
 
+      const handleRegister = async (e) => {
+        e.preventDefault();
+    
+        //que la contrasena tenga 8 caracteres, 1 mayuscula, 1 minuscula y 1 numero
+        if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(contraseña)) {
+          setAlertMessage(
+            "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número"
+          );
+          setAlertType("Atencion");
+          return;
+        }
+    
+        //chequear que ningun campo sea vacio
+        if (usuario === "" || email === "" || contraseña === "") {
+          setAlertMessage("Por favor, complete todos los campos");
+          setAlertType("Atencion");
+          return;
+        }
+      
+        //chequear que el email tenga un formato valido
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+          setAlertMessage("Informacion de contacto invalida");
+          setAlertType("Atencion");
+          return;
+        }
+    
+        try {
+          const response = await axios.post("http://localhost:8080/api/register", {
+            usuario,
+            email,
+            contraseña
+          });
+    
+          if (response.status === 200) {
+            console.log("Se ha registrado el usuario", usuario)
+            console.log("Usuario registrado exitosamente: ", response.data);
+            setAlertMessage("Usuario registrado exitosamente");
+            setAlertType("Éxito");
+            setAction("Log In") // Redirigir al login después de registrar
+          } else {
+            setAlertMessage(response.data);
+            setAlertType("Error");
+          }
+        } catch (error) {
+          console.error("Error de red: ", error);
+          setAlertMessage("Error al registrar el usuario. Por favor, intente nuevamente.");
+          setAlertType("Error");
+        }
+      };
+
     return (
         <div className="login-signup-container">
             <div className="submit-container">
@@ -129,7 +179,7 @@ const LoginSignup = () => {
                 {action==="Sign Up"?<div></div>:<div className="forgot-password"><span>Olvide mi contrasena </span></div>}
                 <div className="enter-container">
                     {action==="Log In"?<div className="enter" onClick={handleLogin}>Ingresa</div>: <div></div>}
-                    {action==="Sign Up"?<div className="enter">Crear</div>: <div></div>}    
+                    {action==="Sign Up"?<div className="enter" onClick={handleRegister}>Crear</div>: <div></div>}    
                         
                 </div>
             </div>
