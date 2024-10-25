@@ -52,19 +52,19 @@ const LoginSignup = () => {
             }
           );
           console.log("Iniciando sesion con: ", { email, contraseña });
-    
+          console.log("Respuesta del servidor: ", response);
           if (response.status === 200) {
             
-            const { user } = response.data;
-
-            const tipo = user.tipo;
+            const user = response.data;
+            
+            const role = user.role;
 
             localStorage.setItem("user", JSON.stringify(user));
     
             //redireccionamos a la pagina correspondiente segun el tipo de usuario
-            if (tipo === "CLIENT") {
+            if (role === "CLIENT") {
               navigate("/main");
-            } else if (tipo === "ADMIN") {
+            } else if (role === "ADMIN") {
               navigate("/admin");
             }
           } else {
