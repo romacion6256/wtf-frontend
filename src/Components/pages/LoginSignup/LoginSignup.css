@@ -11,6 +11,7 @@
     left: 0;
     transform: none;  /* Elimina la traslación vertical */
     min-height: 300px; /* Asegura un mínimo de altura */
+    align-items: center;
 }
 
 /* Media Queries para pantallas más pequeñas */
@@ -109,7 +110,6 @@
 }
 
 .forgot-password{
-    padding-left: 380px; /* Ajusta el padding */
     margin-top: 20px;
     color: #797979;
     font-size: 16px; /* Reduce el tamaño de la fuente */
