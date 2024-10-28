@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import SidebarAdmin from './SidebarAdmin';
+import Layout from './Layout';
+import axios from "axios";
 
 const MisDatos = () => {
     const [nombreUsuario, setNombreUsuario] = useState('Admin/User Name');
+    const [role, setRole] = useState(null); // Definir role y setRole
+
     const [email, setEmail] = useState('mail@example.com');
     const [fechaNacimiento, setFechaNacimiento] = useState('');
     const [nombre, setNombre] = useState('');
@@ -17,9 +22,22 @@ const MisDatos = () => {
             nombreUsuario, email, fechaNacimiento, nombre, apellido, cedula, celular, direccion, contrasenia,
         });
     };
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+            setRole(user.role);
+        } else {
+            navigate("/login"); // Redirige al login si no hay un usuario
+        }
+    }, [navigate]);
+
+    const SidebarComponent = role === "ADMIN" ? SidebarAdmin : Layout;
+
 
     return (
-        <SidebarAdmin>
+        <SidebarComponent>
             <div className="p-4 bg-white rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold mb-4">Mis Datos</h2>
                 <div className="mb-4">
@@ -57,7 +75,7 @@ const MisDatos = () => {
                 {/* Otros campos: nombre, apellido, cédula, celular, dirección, contraseña */}
                 <button onClick={handleGuardar} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Guardar</button>
             </div>
-        </SidebarAdmin>
+        </SidebarComponent>
     );
 };
 
