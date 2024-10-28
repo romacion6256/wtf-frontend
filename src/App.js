@@ -12,6 +12,8 @@ import AgregarFuncion from "./Components/pages/AgregarFuncion";
 import AgregarSnack from "./Components/pages/AgregarSnack";
 import MisDatos from "./Components/pages/MisDatos";
 import AgregarAdmin from './Components/pages/AgregarAdmin';
+import CalificarPelicula from './Components/pages/CalificarPelicula';
+
 
 const App = () => {
   return (
@@ -28,6 +30,8 @@ const App = () => {
           <Route path="/agregarfuncion" element={<AgregarFuncion />} />
           <Route path="/agregarsnack" element={<AgregarSnack />} />
           <Route path="/misdatos" element={<MisDatos />} />
+          <Route path="/calificar" element={<CalificarPelicula />} />
+
 
         </Routes>
       </Router>

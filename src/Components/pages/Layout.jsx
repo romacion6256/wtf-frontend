@@ -55,10 +55,10 @@ const Layout = ({ children }) => {
                             <span className="text-2xl"><i className="bx bx-shopping-bag"></i></span>
                             <span>Comprar Entradas</span>
                         </a>
-                        {/* <a href="#" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-heart"></i></span>
-                            <span>My Favourite</span>
-                        </a> */}
+                        <a href="calificar" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+                            <span className="text-2xl"><i className="bx bx-star"></i></span>
+                            <span>Calificar</span>
+                        </a> 
                         <a href="/" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
                             <span className="text-2xl"><i className="bx bx-log-out"></i></span>
                             <span>Log out</span>
