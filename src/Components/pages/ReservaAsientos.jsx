@@ -262,7 +262,7 @@ const ReservaAsientos = () => {
                                                 <div
                                                     key={colIndex}
                                                     onClick={() => toggleAsiento(rowIndex, colIndex)}
-                                                    className={`w-10 h-10 rounded-full cursor-pointer ${isSeleccionado ? 'bg-blue-500' : 'bg-green-500'}`}
+                                                    className={`w-6 h-6 rounded-full cursor-pointer ${isSeleccionado ? 'bg-blue-500' : 'bg-green-500'}`}
                                                     style={{ border: isSeleccionado ? '2px solid blue' : '2px solid transparent' }}
                                                 >
                                                     {isSeleccionado && <span className="text-white text-xs"></span>}
