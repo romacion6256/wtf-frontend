@@ -29,7 +29,7 @@ const MisDatos = () => {
         if (user) {
             setRole(user.role);
         } else {
-            navigate("/login"); // Redirige al login si no hay un usuario
+            navigate("/"); // Redirige al login si no hay un usuario
         }
     }, [navigate]);
 

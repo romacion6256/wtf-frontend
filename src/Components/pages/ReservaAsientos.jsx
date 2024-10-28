@@ -8,7 +8,8 @@ import MisReservas from './MisReservas';
 const titulos = ['Película 1', 'Película 2', 'Película 3'];
 const sucursales = ['Punta Carretas', 'Ciudad Vieja', 'Pocitos','Carrasco','Tres Cruces','Centro','Malvin','Buceo'];
 const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
-const horarios = ['19:00 - 2D Sub', '21:30 - 3D Esp', '18:00 - 4D'];
+const horarios = ['19:00', '21:30', '18:00'];
+const formatos = ['2D Sub', '3D Esp']
 const precioAsiento = 100;
 const snacks = [
     { id: 1, nombre: 'Popcorn', precio: 50, imagen: 'https://plchldr.co/i/100x100' },
@@ -23,6 +24,7 @@ const ReservaAsientos = () => {
     const [sucursal, setSucursal] = useState('');
     const [fecha, setFecha] = useState('');
     const [hora, setHora] = useState('');
+    const [formato, setFormato] = useState('');
     const [asientosSeleccionados, setAsientosSeleccionados] = useState([]);
     const [mostrarPopupSnacks, setMostrarPopupSnacks] = useState(false);
     const [mostrarConfirmacionCompra, setMostrarConfirmacionCompra] = useState(false);
@@ -46,6 +48,7 @@ const ReservaAsientos = () => {
         setSucursal('');
         setFecha('');
         setHora('');
+        setFormato('');
     };
     // Función para formatear los asientos seleccionados
     const formatearAsientosSeleccionados = () => {
@@ -66,11 +69,11 @@ const ReservaAsientos = () => {
         setAsientosSeleccionados(nuevoEstado);
     };
 
-    const puedeSeleccionarAsientos = titulo && sucursal && fecha && hora;
+    const puedeSeleccionarAsientos = titulo && sucursal && fecha && hora && formato;
     const totalAsientosSeleccionados = asientosSeleccionados.length;
     const totalPrecio = totalAsientosSeleccionados * precioAsiento;
 
-    const mostrarPopup = sucursal && fecha && hora && asientosSeleccionados.length > 0;
+    const mostrarPopup = sucursal && fecha && hora && formato && asientosSeleccionados.length > 0;
 
     const aumentarCantidad = (id) => {
         setCantidadSnacks((prev) => ({
@@ -102,6 +105,12 @@ const ReservaAsientos = () => {
         setMostrarResumenPago(false);
         setMostrarConfirmacionCompra(true);
     };
+    const abrirResumenPago = () => {
+        setMostrarPopupSnacks(false);
+        setMostrarResumenPago(true);
+    };
+
+
 
     return (
         <Layout>
@@ -146,7 +155,8 @@ const ReservaAsientos = () => {
                                     setTitulo(e.target.value); 
                                     setSucursal(''); 
                                     setFecha(''); 
-                                    setHora(''); 
+                                    setHora('');
+                                    setFormato(''); 
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={titulo}
@@ -197,9 +207,9 @@ const ReservaAsientos = () => {
                             </select>
                         </div>
 
-                        {/* Campo de Hora/Formato */}
+                        {/* Campo de Hora */}
                         <div className="flex-1">
-                            <label className="block mb-1">Hora y Formato:</label>
+                            <label className="block mb-1">Hora:</label>
                             <select 
                                 onChange={(e) => { 
                                     setHora(e.target.value); 
@@ -212,6 +222,24 @@ const ReservaAsientos = () => {
                                 <option value="">Seleccionar Hora</option>
                                 {horarios.map((hor, index) => (
                                     <option key={index} value={hor}>{hor}</option>
+                                ))}
+                            </select>
+                        </div>
+                        {/* Campo de Formato */}
+                        <div className="flex-1">
+                            <label className="block mb-1">Formato:</label>
+                            <select 
+                                onChange={(e) => { 
+                                    setFormato(e.target.value); 
+                                    setAsientosSeleccionados([]); 
+                                }} 
+                                value={formato} 
+                                disabled={!hora}
+                                className="w-full p-2 border rounded"
+                            >
+                                <option value="">Seleccionar Formato</option>
+                                {formatos.map((format, index) => (
+                                    <option key={index} value={format}>{format}</option>
                                 ))}
                             </select>
                         </div>
@@ -266,108 +294,102 @@ const ReservaAsientos = () => {
             
                     </div>
                 </div>
-             {/* Pop-up para agregar snacks */}
-             {mostrarPopupSnacks && (
+            {/* Pop-up para agregar snacks */}
+            {mostrarPopupSnacks && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                        <div className="bg-white p-4 rounded shadow-md w-80">
+                        <div className="bg-white p-4 rounded-md w-96">
                             <h2 className="text-lg font-bold mb-4">Selecciona tus Snacks</h2>
-                            <div className="grid grid-cols-4 gap-4 max-h-48 overflow-y-auto">
-                                {snacks.map((snack) => (
-                                    <div key={snack.id} className="flex flex-col items-center">
-                                        <img src={snack.imagen} alt={snack.nombre} className="w-20 h-20" />
-                                        <p className="text-sm mt-2">{snack.nombre}</p>
-                                        <p className="text-sm font-bold">${snack.precio}</p>
-                                        <div className="flex items-center mt-1">
-                                            <button className="px-2 py-1 bg-gray-300" onClick={() => disminuirCantidad(snack.id)}>-</button>
-                                            <span className="px-3">{cantidadSnacks[snack.id] || 0}</span>
-                                            <button className="px-2 py-1 bg-gray-300" onClick={() => aumentarCantidad(snack.id)}>+</button>
-                                        </div>
+                            {snacks.map((snack) => (
+                                <div key={snack.id} className="flex items-center justify-between mb-2">
+                                    <img src={snack.imagen} alt={snack.nombre} className="w-10 h-10 mr-2" />
+                                    <span>{snack.nombre} - ${snack.precio}</span>
+                                    <div className="flex items-center">
+                                        <button
+                                            className="px-2 py-1 bg-gray-200 rounded"
+                                            onClick={() => disminuirCantidad(snack.id)}
+                                        >-</button>
+                                        <span className="mx-2">{cantidadSnacks[snack.id] || 0}</span>
+                                        <button
+                                            className="px-2 py-1 bg-gray-200 rounded"
+                                            onClick={() => aumentarCantidad(snack.id)}
+                                        >+</button>
                                     </div>
-                                ))}
-                            </div>
-                            <button
-                                className="bg-blue-500 text-white py-2 px-4 mt-4"
-                                onClick={confirmarCompra}
-                            >
-                                Comprar (${totalPrecioSnacks})
-                            </button>
-                        </div>
-                    </div>
-                )}
-            {/* Resumen de pago */}
-                {mostrarResumenPago && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                        <div className="bg-white p-4 rounded shadow-md w-64">
-                            <h2 className="text-lg font-bold mb-4">Resumen de Pago</h2>
-                            <p className="font-bold">Asientos Seleccionados:</p>
-                            <ul className="mb-4">
-                                {asientosSeleccionados.map(asiento => {
-                                    const [fila, columna] = asiento.split('-');
-                                    return (
-                                        <li key={asiento}>{`Fila ${parseInt(fila) + 1}, Asiento ${parseInt(columna) + 1}`}</li>
-                                    );
-                                })}
-                            </ul>
-                            <p className="font-bold">Snacks Seleccionados:</p>
-                            <ul className="mb-4">
-                                {snacks.filter(snack => cantidadSnacks[snack.id]).map(snack => (
-                                    <li key={snack.id}>
-                                        {snack.nombre} x {cantidadSnacks[snack.id]} - ${snack.precio * cantidadSnacks[snack.id]}
-                                    </li>
-                                ))}
-                            </ul>
-                            <p className="font-bold">Total: ${totalPrecio + totalPrecioSnacks}</p>
-                            <button
-                                className="bg-green-500 text-white py-2 px-4 mt-4"
-                                onClick={finalizarCompra}
-                            >
-                                Confirmar Compra
-                            </button>
-                        </div>
-                    </div>
-                )}
-                {/* Resumen de pago antes de confirmar */}
-                {mostrarResumenPago && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                        <div className="bg-white p-4 rounded shadow-md w-80">
-                            <h2 className="text-lg font-bold mb-4">Resumen de Pago</h2>
-                            <div className="text-sm">
-                                <p><strong>Asientos Seleccionados:</strong></p>
-                                <ul>
-                                    {formatearAsientosSeleccionados().map((asiento, index) => (
-                                        <li key={index}>{asiento}</li>
-                                    ))}
-                                </ul>
-                                <p className="mt-2"><strong>Total por Asientos:</strong> ${totalPrecio}</p>
-                            </div>
-                            <div className="text-sm mt-4">
-                                <p><strong>Snacks Seleccionados:</strong></p>
-                                <ul>
-                                    {snacks.map((snack) => {
-                                        const cantidad = cantidadSnacks[snack.id] || 0;
-                                        return cantidad > 0 && (
-                                            <li key={snack.id}>
-                                                {snack.nombre} (x{cantidad}): ${cantidad * snack.precio}
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                                <p className="mt-2"><strong>Total por Snacks:</strong> ${totalPrecioSnacks}</p>
-                            </div>
-                            <p className="mt-4 font-bold">Total Final: ${totalPrecio + totalPrecioSnacks}</p>
-                            <div className="mt-4 flex justify-end">
-                                <button
-                                    className="bg-blue-500 text-white py-2 px-4"
-                                    onClick={finalizarCompra}
-                                >
-                                    Confirmar Compra
+                                </div>
+                            ))}
+                            <div className="mt-4">
+                                <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={abrirResumenPago}>
+                                    Confirmar Snacks (${totalPrecioSnacks})
                                 </button>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* Confirmación de compra */}
+                {/* Pop-up de resumen de pago */}
+            {mostrarResumenPago && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-4 rounded shadow-md w-96">
+                        <h2 className="text-lg font-bold mb-4">Resumen de Pago</h2>
+                        <div className="mb-4">
+                            <h3 className="font-bold">Asientos Seleccionados:</h3>
+                            <ul>
+                                {formatearAsientosSeleccionados().map((asiento, index) => (
+                                    <li key={index}>{asiento}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="mb-4">
+                            <h3 className="font-bold">Snacks Seleccionados:</h3>
+                            <ul>
+                                {snacks
+                                    .filter(snack => cantidadSnacks[snack.id] > 0)
+                                    .map(snack => (
+                                        <li key={snack.id}>
+                                            {snack.nombre} x {cantidadSnacks[snack.id]} - ${snack.precio * cantidadSnacks[snack.id]}
+                                        </li>
+                                    ))}
+                            </ul>
+                        </div>
+                        <p className="font-bold">Total: ${totalPrecio + totalPrecioSnacks}</p>
+                        <div className="flex justify-end space-x-2 mt-4">
+                            <button
+                                className="bg-gray-300 px-4 py-2"
+                                onClick={() => setMostrarResumenPago(false)}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2"
+                                onClick={finalizarCompra}
+                            >
+                                Confirmar Pago
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
+                {/* Pop-up de confirmación de compra
+                {mostrarConfirmacionCompra && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                        <div className="bg-white p-4 rounded-md w-96">
+                            <h2 className="text-lg font-bold mb-4">Compra Confirmada</h2>
+                            <p>¡Tu compra ha sido realizada exitosamente!</p>
+                            <Link to="/misreservas" className="block mt-4 text-blue-500 underline">
+                                Ver Mis Reservas
+                            </Link>
+                            <button
+                                className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+                                onClick={cerrarConfirmacion}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                )} */}
+
+                {/* Confirmación de compra*/}
                 {mostrarConfirmacionCompra && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                         <div className="bg-white p-4 rounded shadow-md w-64 text-center">
@@ -385,7 +407,7 @@ const ReservaAsientos = () => {
                             </button>
                         </div>
                     </div>
-                )}
+                )} 
             </div>
         </Layout>
     );
