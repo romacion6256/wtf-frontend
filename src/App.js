@@ -12,9 +12,6 @@ import AgregarFuncion from "./Components/pages/AgregarFuncion";
 import AgregarSnack from "./Components/pages/AgregarSnack";
 import MisDatos from "./Components/pages/MisDatos";
 import AgregarAdmin from './Components/pages/AgregarAdmin';
-import MovieList from './Components/pages/MovieList';
-//import React from 'react';
-import BackendMessage from './pages/BackendMessage';
 
 const App = () => {
   return (
@@ -31,14 +28,10 @@ const App = () => {
           <Route path="/agregarfuncion" element={<AgregarFuncion />} />
           <Route path="/agregarsnack" element={<AgregarSnack />} />
           <Route path="/misdatos" element={<MisDatos />} />
-          <Route path="/movie-list" element={<MovieList />} />
-          <Route path="/backend-message" element={<BackendMessage />} />
-
 
         </Routes>
       </Router>
   );
 };
-
 
 export default App;
