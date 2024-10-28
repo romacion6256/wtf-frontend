@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Layout from './Layout';
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 
-import MisReservas from './MisReservas';
+//import MisReservas from './MisReservas';
 
 // Datos de ejemplo para títulos
 const titulos = ['Película 1', 'Película 2', 'Película 3'];
@@ -37,19 +37,19 @@ const ReservaAsientos = () => {
     const asientos = Array.from({ length: totalFilas }, () => Array(totalColumnas).fill(false));
 
 
-    const cerrarConfirmacion = () => {
-        setMostrarConfirmacionCompra(false);
-        setMostrarPopupSnacks(false);
-        setMostrarResumenPago(false);
-        setAsientosSeleccionados([]);
-        setCantidadSnacks({});
-        // Restaura otros estados si es necesario
-        setTitulo('');
-        setSucursal('');
-        setFecha('');
-        setHora('');
-        setFormato('');
-    };
+    // const cerrarConfirmacion = () => {
+    //     setMostrarConfirmacionCompra(false);
+    //     setMostrarPopupSnacks(false);
+    //     setMostrarResumenPago(false);
+    //     setAsientosSeleccionados([]);
+    //     setCantidadSnacks({});
+    //     // Restaura otros estados si es necesario
+    //     setTitulo('');
+    //     setSucursal('');
+    //     setFecha('');
+    //     setHora('');
+    //     setFormato('');
+    // };
     // Función para formatear los asientos seleccionados
     const formatearAsientosSeleccionados = () => {
         return asientosSeleccionados.map(asiento => {
@@ -97,10 +97,10 @@ const ReservaAsientos = () => {
         setMostrarPopupSnacks(true);
     };
 
-    const confirmarCompra = () => {
-        setMostrarPopupSnacks(false);
-        setMostrarConfirmacionCompra(true);
-    };
+    // const confirmarCompra = () => {
+    //     setMostrarPopupSnacks(false);
+    //     setMostrarConfirmacionCompra(true);
+    // };
     const finalizarCompra = () => {
         setMostrarResumenPago(false);
         setMostrarConfirmacionCompra(true);
@@ -118,9 +118,10 @@ const ReservaAsientos = () => {
             
                 {/* Mitad izquierda: imagen de la película */}
                 <div className="w-1/3 flex items-center justify-center bg-gray-200 relative">
-                    <img src="https://plchldr.co/i/600x800" alt="Película" className="object-cover h-full" />
+                <img src={require('../Assets/asientos.jpeg')} alt="Película" className="object-cover h-full" />
+
                     {/* Título de la pantalla */}
-                    <h1 className="absolute top-4 left-4 text-2xl font-bold text-black">Comprar Entradas</h1>
+                    <h1 className="absolute top-4 left-4 text-2xl font-bold text-white">Comprar Entradas</h1>
                     {mostrarPopup && totalAsientosSeleccionados > 0 && (
     <div className="absolute bg-white p-4 border border-gray-300 shadow-md w-64">
         <h3 className="font-bold text-md">Asientos Seleccionados:</h3>
