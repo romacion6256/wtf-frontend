@@ -4,7 +4,10 @@ import SidebarAdmin from './SidebarAdmin';
 const AgregarPelicula = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [titulo, setTitulo] = useState('');
-    const [imagen, setImagen] = useState(null);
+    const [director, setDirector] = useState('');
+    const [duracion, setDuracion] = useState('');
+    const [año, setAño] = useState('');
+
 
     const handleAgregarClick = () => {
         setShowPopup(true);
@@ -13,18 +16,15 @@ const AgregarPelicula = () => {
     const handleCerrarPopup = () => {
         setShowPopup(false);
         setTitulo('');
-        setImagen(null);
+        setDirector('');
     };
 
     const handleGuardarPelicula = () => {
         // Aquí puedes manejar la lógica para guardar la película
-        console.log('Pelicula guardada:', { titulo, imagen });
+        console.log('Pelicula guardada:', { titulo, director,duracion,año });
         handleCerrarPopup();
     };
 
-    const handleImagenChange = (e) => {
-        setImagen(URL.createObjectURL(e.target.files[0]));
-    };
 
     return (
         <SidebarAdmin>
@@ -52,14 +52,34 @@ const AgregarPelicula = () => {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">Imagen</label>
+                                <label className="block text-sm font-medium mb-1">Director</label>
                                 <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImagenChange}
+                                    type="text"
+                                    value={director}
+                                    onChange={(e) => setDirector(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
+                                    placeholder="Director de la película"
                                 />
-                                {imagen && <img src={imagen} alt="Preview" className="mt-4 w-32 h-32 object-cover" />}
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1">Año</label>
+                                <input
+                                    type="text"
+                                    value={año}
+                                    onChange={(e) => setAño(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    placeholder="Año de lanzamiento"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1">Duración</label>
+                                <input
+                                    type="text"
+                                    value={duracion}
+                                    onChange={(e) => setDuracion(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    placeholder="Duración de la película"
+                                />
                             </div>
                             <button
                                 onClick={handleGuardarPelicula}

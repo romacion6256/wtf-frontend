@@ -9,8 +9,10 @@ const AgregarFuncion = () => {
     const [peliculas, setPeliculas] = useState([]);
     const [peliculaSeleccionada, setPeliculaSeleccionada] = useState('');
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState('');
-    const [fechaSeleccionada, setFechaSeleccionada] = useState('');
-    const [horaFormato, setHoraFormato] = useState('');
+    const [Fecha, setFecha] = useState('');
+    const [Hora, setHora] = useState('');
+    const [Formato, setFormato] = useState('');
+
 
     useEffect(() => {
         // Simulación de llamada a la base de datos para obtener las películas creadas
@@ -30,13 +32,14 @@ const AgregarFuncion = () => {
         setShowPopup(false);
         setPeliculaSeleccionada('');
         setSucursalSeleccionada('');
-        setFechaSeleccionada('');
-        setHoraFormato('');
+        setFecha('');
+        setHora('');
+        setFormato('');
     };
 
     const handleGuardarFuncion = () => {
         // Lógica para guardar la función en la base de datos
-        console.log('Función guardada:', { peliculaSeleccionada, sucursalSeleccionada, fechaSeleccionada, horaFormato });
+        console.log('Función guardada:', { peliculaSeleccionada, sucursalSeleccionada, Hora, Fecha, Formato });
         handleCerrarPopup();
     };
 
@@ -87,25 +90,32 @@ const AgregarFuncion = () => {
                             </div>
                             <div className="mb-4">
                                 <label className="block text-sm font-medium mb-1">Fecha</label>
-                                <select
-                                    value={fechaSeleccionada}
-                                    onChange={(e) => setFechaSeleccionada(e.target.value)}
+                                <input
+                                    type="date"
+                                    value={Fecha}
+                                    onChange={(e) => setFecha(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
-                                >
-                                    <option value="" disabled>Selecciona una fecha</option>
-                                    {fechas.map((fecha, index) => (
-                                        <option key={index} value={fecha}>{fecha}</option>
-                                    ))}
-                                </select>
+                                    placeholder="Ejemplo: 12/03/2024"
+                                />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">Hora/Formato</label>
+                                <label className="block text-sm font-medium mb-1">Hora</label>
                                 <input
                                     type="text"
-                                    value={horaFormato}
-                                    onChange={(e) => setHoraFormato(e.target.value)}
+                                    value={Hora}
+                                    onChange={(e) => setHora(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
-                                    placeholder="Ejemplo: 18:30 hs - 2D Esp"
+                                    placeholder="Ejemplo: 18:30 hs"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1">Formato</label>
+                                <input
+                                    type="text"
+                                    value={Formato}
+                                    onChange={(e) => setFormato(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    placeholder="Ejemplo: 2D Sub"
                                 />
                             </div>
                             <button
