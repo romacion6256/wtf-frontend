@@ -12,10 +12,10 @@ const horarios = ['19:00', '21:30', '18:00'];
 const formatos = ['2D Sub', '3D Esp']
 const precioAsiento = 100;
 const snacks = [
-    { id: 1, nombre: 'Popcorn', precio: 50, imagen: 'https://plchldr.co/i/100x100' },
-    { id: 2, nombre: 'Soda', precio: 30, imagen: 'https://plchldr.co/i/100x100' },
-    { id: 3, nombre: 'Candy', precio: 40, imagen: 'https://plchldr.co/i/100x100' },
-    { id: 4, nombre: 'Nachos', precio: 60, imagen: 'https://plchldr.co/i/100x100' },
+    { id: 1, nombre: 'Popcorn', precio: 50},
+    { id: 2, nombre: 'Soda', precio: 30 },
+    { id: 3, nombre: 'Candy', precio: 40},
+    { id: 4, nombre: 'Nachos', precio: 60},
 ];
 
 
@@ -115,14 +115,17 @@ const ReservaAsientos = () => {
     return (
         <Layout>
             <div className="flex h-full">
+            
                 {/* Mitad izquierda: imagen de la película */}
-                <div className="w-1/2 flex items-center justify-center bg-gray-200 relative">
+                <div className="w-1/3 flex items-center justify-center bg-gray-200 relative">
                     <img src="https://plchldr.co/i/600x800" alt="Película" className="object-cover h-full" />
-                    {mostrarPopup && totalAsientosSeleccionados > 0 &&(
-                        <div className="absolute bg-white p-2 border border-gray-300 shadow-md w-48">
-                            <h3 className="font-bold text-sm">Asientos Seleccionados:</h3>
-                            <ul className="text-xs">
-                            {formatearAsientosSeleccionados().map((asiento, index) => (
+                    {/* Título de la pantalla */}
+                    <h1 className="absolute top-4 left-4 text-2xl font-bold text-black">Comprar Entradas</h1>
+                    {mostrarPopup && totalAsientosSeleccionados > 0 && (
+    <div className="absolute bg-white p-4 border border-gray-300 shadow-md w-64">
+        <h3 className="font-bold text-md">Asientos Seleccionados:</h3>
+        <ul className="text-sm">
+            {formatearAsientosSeleccionados().map((asiento, index) => (
                 <li key={index} className="flex justify-between">
                     <span>{asiento}</span>
                     <button
@@ -134,9 +137,7 @@ const ReservaAsientos = () => {
                 </li>
             ))}
         </ul>
-        <button className="bg-blue-500 text-white py-1 px-2 mt-2 text-xs"
-            onClick={reservarAsientos}
-        >
+        <button className="bg-blue-500 text-white py-2 px-4 mt-2 text-sm" onClick={reservarAsientos}>
             Reservar (${totalPrecio})
         </button>
     </div>
@@ -144,7 +145,7 @@ const ReservaAsientos = () => {
                 </div>
 
                 {/* Mitad derecha: formularios y matriz de asientos */}
-                <div className="w-1/2 p-4 overflow-y-auto" style={{ maxHeight: "80vh" }}>
+                <div className="w-2/3 p-4 overflow-y-auto" style={{ maxHeight: "80vh" }}>
                     {/* Fila de selección */}
                     <div className="flex space-x-4 mb-4">
                         {/* Campo de Título */}
@@ -301,7 +302,7 @@ const ReservaAsientos = () => {
                             <h2 className="text-lg font-bold mb-4">Selecciona tus Snacks</h2>
                             {snacks.map((snack) => (
                                 <div key={snack.id} className="flex items-center justify-between mb-2">
-                                    <img src={snack.imagen} alt={snack.nombre} className="w-10 h-10 mr-2" />
+                                    {/* <img src={snack.imagen} alt={snack.nombre} className="w-10 h-10 mr-2" /> */}
                                     <span>{snack.nombre} - ${snack.precio}</span>
                                     <div className="flex items-center">
                                         <button
