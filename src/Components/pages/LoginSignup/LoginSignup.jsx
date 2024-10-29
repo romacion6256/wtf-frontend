@@ -3,7 +3,7 @@ import "./LoginSignup.css"
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Alerta from "../../elements/Alerta";
-
+import { useUser } from "../../UserContext";
 import user_icon from "../../Assets/person.png"
 import email_icon from "../../Assets/email.png"
 import password_icon from '../../Assets/password.png'
@@ -21,6 +21,8 @@ const LoginSignup = () => {
     const [contraseña, setContraseña] = useState("");
     const navigate = useNavigate();
     
+    const { setUser } = useUser();
+
     const handleUsuarioChange = (e) => {
         setUsuario(e.target.value);
     };
@@ -33,6 +35,7 @@ const LoginSignup = () => {
         setEmail(e.target.value);
     };
     
+
     const handleLogin = async (e) => {
         e.preventDefault();
         console.log("Iniciando sesion con: ", email, contraseña);
@@ -53,14 +56,17 @@ const LoginSignup = () => {
           );
           console.log("Iniciando sesion con: ", { email, contraseña });
           console.log("Respuesta del servidor: ", response);
+
           if (response.status === 200) {
             
             const user = response.data;
-            
+            setUser(user); 
+            console.log("User state updated:", user);
+
             const role = user.role;
 
             localStorage.setItem("user", JSON.stringify(user));
-    
+            
             //redireccionamos a la pagina correspondiente segun el tipo de usuario
             if (role === "CLIENT") {
               navigate("/main");

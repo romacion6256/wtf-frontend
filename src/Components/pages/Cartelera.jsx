@@ -1,7 +1,10 @@
 import React from 'react';
 import Layout from './Layout'; // Importa el componente Layout
+import { useUser } from '../../Components/UserContext';
+import { useNavigate } from "react-router-dom";
 
 const Cartelera = () => {
+    
     return (
         <Layout active="cartelera">
             <div className="grid grid-cols-3 gap-4">

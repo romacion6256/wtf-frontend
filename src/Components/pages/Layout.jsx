@@ -1,13 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import 'boxicons/css/boxicons.min.css'; 
+import { useUser } from '../../Components/UserContext';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Layout = ({ children }) => {
+
+    const { user , setUser,loading } = useUser();
+    const navigate = useNavigate();
+  
+    const handleLoginRedirect = () => {
+      navigate("/login");
+    };
     
     const [asideOpen, setAsideOpen] = useState(true);
     const [profileOpen, setProfileOpen] = useState(false);
 
     const toggleAside = () => setAsideOpen(!asideOpen);
     const toggleProfile = () => setProfileOpen(!profileOpen);
+
+    useEffect(() => {
+        // Optional: Any actions when user changes (like logging to console)
+        console.log("User updated:", user);
+    }, [user]); // Re-run this effect whenever 'user' changes
+
+
+     // Logout function
+     const handleLogout = async () => {
+        try {
+            
+            await axios.post("http://localhost:8080/api/logout");
+            
+            
+            localStorage.removeItem("user");
+            setUser(null);
+            navigate("/login");
+            console.log("User logged out"); // Debug
+        } catch (error) {
+            console.error("Error logging out: ", error);
+        }
+    };
+
 
     return (
         <main className="min-h-screen w-full bg-gray-100 text-gray-700">
@@ -18,14 +51,20 @@ const Layout = ({ children }) => {
                     <button type="button" className="text-3xl" onClick={toggleAside}>
                         <i className="bx bx-menu"></i>
                     </button>
-                    <div className="text-lg font-semibold"><a href="main">WTFun</a></div>
+                    <div className="text-lg font-semibold"><a href="/">WTFun</a></div>
                 </div>
 
                 {/* Nombre de usuario */}
                 <div className="relative flex items-center space-x-2">
+                {!loading && (
                     <button className="flex items-center" onClick={toggleProfile}>
-                        <span className="font-medium ml-2">User Name</span>
+                            {user ? (
+                        <span>Hola, {user.userName}</span>
+                        ) : (
+                        <button onClick={handleLoginRedirect}>Log In</button>
+                        )}
                     </button>
+                )}
                     {profileOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
                             <a
@@ -34,6 +73,7 @@ const Layout = ({ children }) => {
                             >
                                 Mis Datos
                             </a>
+                        
                         </div>
                     )}
                 </div>
@@ -43,7 +83,7 @@ const Layout = ({ children }) => {
                 {/* Barra lateral */}
                 {asideOpen && (
                     <aside className="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" style={{ height: "100vh" }}>
-                        <a href="cartelera" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+                        <a href="/" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
                             <span className="text-2xl"><i className="bx bx-home"></i></span>
                             <span>Cartelera</span>
                         </a>
@@ -59,10 +99,10 @@ const Layout = ({ children }) => {
                             <span className="text-2xl"><i className="bx bx-star"></i></span>
                             <span>Calificar</span>
                         </a> 
-                        <a href="/" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+                        <button onClick={handleLogout} className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
                             <span className="text-2xl"><i className="bx bx-log-out"></i></span>
-                            <span>Log out</span>
-                        </a>
+                            <span>Log Out</span>
+                        </button>
                     </aside>
                 )}
 
