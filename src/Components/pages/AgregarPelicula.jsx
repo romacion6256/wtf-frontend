@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import SidebarAdmin from './SidebarAdmin';
+
+
 
 const AgregarPelicula = () => {
     const [showPopup, setShowPopup] = useState(false);
+    const [generos, setGeneros] = useState([]);
     const [titulo, setTitulo] = useState('');
     const [director, setDirector] = useState('');
     const [duracion, setDuracion] = useState('');
     const [año, setAño] = useState('');
+    const [generoSeleccionado, setGeneroSeleccionado] = useState('');
 
+
+    useEffect(() => {
+        // Simulación de llamada a la base de datos para obtener generos creados
+        const obtenerGeneros = async () => {
+            // Aquí deberías hacer la llamada real a tu base de datos
+            const generosCreados = ['Genero 1', 'Genero 2']; // Ejemplo de datos
+            setGeneros(generosCreados);
+        };
+        obtenerGeneros();
+    }, []);
 
     const handleAgregarClick = () => {
         setShowPopup(true);
@@ -17,11 +31,14 @@ const AgregarPelicula = () => {
         setShowPopup(false);
         setTitulo('');
         setDirector('');
+        setDuracion('');
+        setAño('');
+        setGeneroSeleccionado('');
     };
 
     const handleGuardarPelicula = () => {
         // Aquí puedes manejar la lógica para guardar la película
-        console.log('Pelicula guardada:', { titulo, director,duracion,año });
+        console.log('Pelicula guardada:', { titulo, director,duracion,año,generoSeleccionado });
         handleCerrarPopup();
     };
 
@@ -80,6 +97,24 @@ const AgregarPelicula = () => {
                                     className="w-full px-3 py-2 border rounded"
                                     placeholder="Duración de la película"
                                 />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1">Género</label>
+                                <select
+                                    value={generoSeleccionado}
+                                    onChange={(e) => setGeneroSeleccionado(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                >
+                                    <option value="" disabled>Selecciona un genero</option>
+                                    {generos.length > 0 ? (
+                                        generos.map((genero, index) => (
+                                            <option key={index} value={genero}>{genero}</option>
+                                        ))
+                                    ) : (
+                                        <option value="" disabled>No hay géneros disponibles</option>
+                                    )}
+                                    
+                                </select>
                             </div>
                             <button
                                 onClick={handleGuardarPelicula}
