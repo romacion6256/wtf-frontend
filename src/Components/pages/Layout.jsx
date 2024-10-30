@@ -84,7 +84,7 @@ const Layout = ({ children }) => {
                 {asideOpen && (
                     <aside className="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" style={{ height: "100vh" }}>
                         <a href="/" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-home"></i></span>
+                            <span className="text-2xl"><i className="bx bx-movie"></i></span>
                             <span>Cartelera</span>
                         </a>
                         <a href="misreservas" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
@@ -94,6 +94,10 @@ const Layout = ({ children }) => {
                         <a href="reservaasientos" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
                             <span className="text-2xl"><i className="bx bx-shopping-bag"></i></span>
                             <span>Comprar Entradas</span>
+                        </a>
+                        <a href="metodopago" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+                            <span className="text-2xl"><i className="bx bx-money"></i></span>
+                            <span>Método de Pago</span>
                         </a>
                         <a href="calificar" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
                             <span className="text-2xl"><i className="bx bx-star"></i></span>
