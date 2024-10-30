@@ -1,12 +1,33 @@
 import React, { useState } from 'react';
 import 'boxicons/css/boxicons.min.css';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useUser } from '../../Components/UserContext';
 
 const SidebarAdmin = ({ children }) => {
     const [asideOpen, setAsideOpen] = useState(true);
     const [profileOpen, setProfileOpen] = useState(false);
+    const { setUser } = useUser();
 
     const toggleAside = () => setAsideOpen(!asideOpen);
     const toggleProfile = () => setProfileOpen(!profileOpen);
+    const navigate = useNavigate();
+
+     // Logout function
+     const handleLogout = async () => {
+        try {
+            
+            await axios.post("http://localhost:8080/api/logout");
+            
+            
+            localStorage.removeItem("user");
+            setUser(null);
+            navigate("/login");
+            console.log("User logged out"); // Debug
+        } catch (error) {
+            console.error("Error logging out: ", error);
+        }
+    };
 
     return (
         <main className="min-h-screen w-full bg-gray-100 text-gray-700">
@@ -54,10 +75,10 @@ const SidebarAdmin = ({ children }) => {
                             <span className="text-2xl"><i className="bx bx-heart"></i></span>
                             <span>Agregar Snack</span>
                         </a> 
-                        <a href="/" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+                        <button onClick={handleLogout} className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
                             <span className="text-2xl"><i className="bx bx-log-out"></i></span>
-                            <span>Log out</span>
-                        </a>
+                            <span>Log Out</span>
+                        </button>
                     </aside>
                 )}
 

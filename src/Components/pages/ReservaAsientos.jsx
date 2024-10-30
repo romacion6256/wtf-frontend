@@ -280,15 +280,15 @@ const ReservaAsientos = () => {
                         <div className="mt-4">
                             <div className="flex space-x-2">
                                 <div className="flex items-center">
-                                    <div className="w-4 h-4 bg-green-500"></div>
+                                    <div className="w-4 h-4 bg-green-500 rounded-3xl"></div>
                                     <span className="ml-1">Disponible</span>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-4 h-4 bg-red-500"></div>
+                                    <div className="w-4 h-4 bg-red-500 rounded-3xl"></div>
                                     <span className="ml-1">Reservado</span>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-4 h-4 bg-blue-500"></div>
+                                    <div className="w-4 h-4 bg-blue-500 rounded-3xl"></div>
                                     <span className="ml-1">Seleccionado</span>
                                 </div>
                             </div>

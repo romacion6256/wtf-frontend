@@ -4,8 +4,8 @@ import { Route, Navigate } from 'react-router-dom';
 import { useUser } from './UserContext'; // Import your context
 
 const AuthenticatedRoute = ({ element, roles }) => {
-    const { user } = useUser();
-
+    //const { user } = useUser();
+    const user = JSON.parse(localStorage.getItem('user')); // Get the user from local
     console.log("AuthenticatedRoute user:", user); // Debug
 
     if (!user) {
