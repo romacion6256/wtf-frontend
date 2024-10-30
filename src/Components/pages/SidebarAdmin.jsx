@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect }  from 'react';
 import 'boxicons/css/boxicons.min.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,11 +7,20 @@ import { useUser } from '../../Components/UserContext';
 const SidebarAdmin = ({ children }) => {
     const [asideOpen, setAsideOpen] = useState(true);
     const [profileOpen, setProfileOpen] = useState(false);
-    const { setUser } = useUser();
+    const { user , setUser,loading } = useUser();
 
     const toggleAside = () => setAsideOpen(!asideOpen);
     const toggleProfile = () => setProfileOpen(!profileOpen);
     const navigate = useNavigate();
+
+    const handleLoginRedirect = () => {
+        navigate("/login");
+      };
+    
+      useEffect(() => {
+        // Optional: Any actions when user changes (like logging to console)
+        console.log("User updated:", user);
+    }, [user]); // Re-run this effect whenever 'user' changes
 
      // Logout function
      const handleLogout = async () => {
@@ -40,9 +49,15 @@ const SidebarAdmin = ({ children }) => {
                 </div>
 
                 <div className="relative flex items-center space-x-2">
-                    <button className="flex items-center" onClick={toggleProfile}>
-                        <span className="font-medium ml-2">Admin Name</span>
-                    </button>
+                    {!loading && (
+                        <button className="flex items-center" onClick={toggleProfile}>
+                                {user ? (
+                            <span>Hola, {user.userName}</span>
+                            ) : (
+                            <button onClick={handleLoginRedirect}>Log In</button>
+                            )}
+                        </button>
+                    )}
                     {profileOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
                             <a
