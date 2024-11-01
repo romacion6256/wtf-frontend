@@ -53,8 +53,10 @@ const MisDatos = () => {
                 
             };
             await axios.put(`http://localhost:8080/api/users/${userId}`, cambios);
+            alert('Datos actualizados con éxito');
             console.log("Datos actualizados con éxito");
         } catch (error) {
+            alert('Error algunos datos inconsistentes');
             console.error("Error al actualizar los datos:", error.response?.data || error.message);
         }
     };
