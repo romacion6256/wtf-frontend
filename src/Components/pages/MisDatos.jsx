@@ -5,10 +5,9 @@ import Layout from './Layout';
 import axios from "axios";
 
 const MisDatos = () => {
-    const [nombreUsuario, setNombreUsuario] = useState('Admin/User Name');
+    const [nombreUsuario, setNombreUsuario] = useState('');
     const [role, setRole] = useState(null); // Definir role y setRole
-
-    const [email, setEmail] = useState('mail@example.com');
+    const [email, setEmail] = useState('');
     const [fechaNacimiento, setFechaNacimiento] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
@@ -17,10 +16,47 @@ const MisDatos = () => {
     const [direccion, setDireccion] = useState('');
     const [contrasenia, setContrasenia] = useState('');
 
-    const handleGuardar = () => {
-        console.log('Datos guardados:', {
-            nombreUsuario, email, fechaNacimiento, nombre, apellido, cedula, celular, direccion, contrasenia,
-        });
+    const fetchUserData = async (id) => {
+        try {
+            const userId = JSON.parse(localStorage.getItem("user")).id;
+            const response = await axios.get(`http://localhost:8080/api/users/${userId}`);
+            const userData = response.data;
+
+            setNombreUsuario(userData.userName || '');
+            setEmail(userData.email || '');
+            setFechaNacimiento(userData.birthDate || '');
+            setNombre(userData.name || '');
+            setApellido(userData.surname || '');
+            setCedula(userData.document?.toString() || '');
+            setCelular(userData.phoneNumber?.toString() || '');
+            setDireccion(userData.adress || '');
+            setContrasenia(userData.password || '');
+
+        } catch (error) {
+            console.error("Error al cargar los datos del usuario:", error);
+        }
+    };
+
+    const handleGuardar = async () => {
+        try {
+            const userId = JSON.parse(localStorage.getItem("user")).id;
+            const cambios = {
+                userName: nombreUsuario,
+                password: contrasenia,
+                name: nombre,
+                surname: apellido,
+                email: email,
+                phoneNumber: celular,
+                adress: direccion,
+                document: cedula,
+                birthDate:fechaNacimiento,
+                
+            };
+            await axios.put(`http://localhost:8080/api/users/${userId}`, cambios);
+            console.log("Datos actualizados con éxito");
+        } catch (error) {
+            console.error("Error al actualizar los datos:", error.response?.data || error.message);
+        }
     };
     const navigate = useNavigate();
     
@@ -28,6 +64,9 @@ const MisDatos = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (user) {
             setRole(user.role);
+            setNombreUsuario(user.userName);
+            console.log(user.id);
+            fetchUserData(user.id);
         } else {
             navigate("/"); // Redirige a cartelera si no hay un usuario
         }
@@ -59,6 +98,10 @@ const MisDatos = () => {
                 <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">Email</label>
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border rounded" />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">Contraseña</label>
+                    <input type="email" value={contrasenia} onChange={(e) => setContrasenia(e.target.value)} className="w-full px-3 py-2 border rounded" />
                 </div>
                 <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">Fecha de Nacimiento</label>

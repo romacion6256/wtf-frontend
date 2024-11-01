@@ -11,14 +11,18 @@ const AgregarPelicula = () => {
     const [duracion, setDuracion] = useState('');
     const [año, setAño] = useState('');
     const [generoSeleccionado, setGeneroSeleccionado] = useState('');
+    const [peliculas, setPeliculas] = useState([]);
 
 
     useEffect(() => {
-        // Simulación de llamada a la base de datos para obtener generos creados
         const obtenerGeneros = async () => {
-            // Aquí deberías hacer la llamada real a tu base de datos
-            const generosCreados = ['Genero 1', 'Genero 2']; // Ejemplo de datos
-            setGeneros(generosCreados);
+            try {
+                const response = await fetch('http://localhost:8080/api/genre/todos');
+                const generosCreados = await response.json();
+                setGeneros(generosCreados);
+            } catch (error) {
+                console.error('Error al obtener los géneros:', error);
+            }
         };
         obtenerGeneros();
     }, []);
@@ -26,6 +30,20 @@ const AgregarPelicula = () => {
     const handleAgregarClick = () => {
         setShowPopup(true);
     };
+
+    // Obtener películas
+    useEffect(() => {
+        const obtenerPeliculas = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/movie/obtenerTodas');
+                const peliculasCargadas = await response.json();
+                setPeliculas(peliculasCargadas);
+            } catch (error) {
+                console.error('Error al obtener las películas:', error);
+            }
+        };
+        obtenerPeliculas();
+    }, []);
 
     const handleCerrarPopup = () => {
         setShowPopup(false);
@@ -36,10 +54,61 @@ const AgregarPelicula = () => {
         setGeneroSeleccionado('');
     };
 
-    const handleGuardarPelicula = () => {
-        // Aquí puedes manejar la lógica para guardar la película
-        console.log('Pelicula guardada:', { titulo, director,duracion,año,generoSeleccionado });
+    const handleGuardarPelicula = async () => {
+        const nuevaPelicula = {
+            movieName: titulo,
+            movieYear: año,
+            nombreDirector: director,
+            duracion: duracion,
+            genero: generoSeleccionado
+        };
+    
+        try {
+            const userId = JSON.parse(localStorage.getItem("user")).id;
+            const response = await fetch(`http://localhost:8080/api/movie/agregarPelicula/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(nuevaPelicula),
+            });
+    
+            if (response.ok) {
+                alert('Película agregada correctamente');
+                const peliculasActualizadas = await fetch('http://localhost:8080/api/movie/obtenerTodas');
+                setPeliculas(await peliculasActualizadas.json());
+            } else {
+                console.error('Error al agregar la película');
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+        }
+    
         handleCerrarPopup();
+    };
+
+    const handleEliminarPelicula = async (idPelicula) => {
+        if (!idPelicula) {
+            console.error("ID de película no proporcionado.");
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:8080/api/movie/eliminar/${idPelicula}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                alert('Película eliminada correctamente');
+                // Actualizar la lista de películas
+                //setPeliculas(peliculas.filter((pelicula) => pelicula.id !== idPelicula));
+                const peliculasActualizadas = await fetch('http://localhost:8080/api/movie/obtenerTodas');
+                setPeliculas(await peliculasActualizadas.json());
+            } else {
+                console.error('Error al eliminar la película');
+            }
+        } catch (error) {
+            console.error('Error en la solicitud de eliminación:', error);
+        }
     };
 
 
@@ -53,6 +122,43 @@ const AgregarPelicula = () => {
                 >
                     Agregar
                 </button>
+
+                {/* Mostrar la lista de películas */}
+                <div className="mt-4">
+                    <h3 className="text-lg font-semibold mb-2">Lista de Películas</h3>
+                    <ul>
+                        {peliculas.length > 0 ? (
+                            peliculas.map((pelicula) => (
+                                <li key={pelicula.idMovie} className="mb-6 border-b pb-4">
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <div className="mb-1">
+                                                <strong>Título:</strong>
+                                                <div>{pelicula.movieName}</div>
+                                            </div>
+                                            <div className="mb-1">
+                                                <strong>Año:</strong>
+                                                <div>{pelicula.year}</div>
+                                            </div>
+                                            <div className="mb-1">
+                                                <strong>Director:</strong>
+                                                <div>{pelicula.directorName}</div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handleEliminarPelicula(pelicula.idMovie)}
+                                            className="px-2 py-1 text-white bg-red-500 rounded hover:bg-red-600"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </li>
+                            ))
+                        ) : (
+                            <p>No hay películas disponibles</p>
+                        )}
+                    </ul>
+                </div>
 
                 {showPopup && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -107,8 +213,8 @@ const AgregarPelicula = () => {
                                 >
                                     <option value="" disabled>Selecciona un genero</option>
                                     {generos.length > 0 ? (
-                                        generos.map((genero, index) => (
-                                            <option key={index} value={genero}>{genero}</option>
+                                        generos.map((genero) => (
+                                            <option key={genero.idGenre} value={genero.name}>{genero.name}</option>
                                         ))
                                     ) : (
                                         <option value="" disabled>No hay géneros disponibles</option>
