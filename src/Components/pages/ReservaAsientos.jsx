@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 //import { Link } from 'react-router-dom';
 
 //import MisReservas from './MisReservas';
 
 // Datos de ejemplo para títulos
-const titulos = ['Película 1', 'Película 2', 'Película 3'];
-const sucursales = ['Punta Carretas', 'Ciudad Vieja', 'Pocitos','Carrasco','Tres Cruces','Centro','Malvin','Buceo'];
+//const titulos = ['Película 1', 'Película 2', 'Película 3'];
+
+//const sucursales = ['Punta Carretas', 'Ciudad Vieja', 'Pocitos','Carrasco','Tres Cruces','Centro','Malvin','Buceo'];
 const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
 const horarios = ['19:00', '21:30', '18:00'];
 const formatos = ['2D Sub', '3D Esp']
@@ -20,8 +21,15 @@ const snacks = [
 
 
 const ReservaAsientos = () => {
-    const [titulo, setTitulo] = useState('');
-    const [sucursal, setSucursal] = useState('');
+    const [peliculas, setPeliculas] = useState([]);
+    const [peliculaSeleccionada, setPeliculaSeleccionada] = useState('');
+    const [sucursales, setSucursales] = useState([]);
+    const [sucursalSeleccionada, setSucursalSeleccionada] = useState('');
+    const [salas, setSala] = useState([]);
+    const [salaSeleccionada, setSalaSeleccionada] = useState('');
+  
+    //const [titulo, setTitulo] = useState('');
+    //const [sucursal, setSucursal] = useState('');
     const [fecha, setFecha] = useState('');
     const [hora, setHora] = useState('');
     const [formato, setFormato] = useState('');
@@ -69,11 +77,11 @@ const ReservaAsientos = () => {
         setAsientosSeleccionados(nuevoEstado);
     };
 
-    const puedeSeleccionarAsientos = titulo && sucursal && fecha && hora && formato;
+    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fecha && hora && formato;
     const totalAsientosSeleccionados = asientosSeleccionados.length;
     const totalPrecio = totalAsientosSeleccionados * precioAsiento;
 
-    const mostrarPopup = sucursal && fecha && hora && formato && asientosSeleccionados.length > 0;
+    const mostrarPopup = sucursalSeleccionada && fecha && hora && formato && asientosSeleccionados.length > 0;
 
     const aumentarCantidad = (id) => {
         setCantidadSnacks((prev) => ({
@@ -110,7 +118,56 @@ const ReservaAsientos = () => {
         setMostrarResumenPago(true);
     };
 
+    // Obtener películas
+    useEffect(() => {
+        const obtenerPeliculas = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/movie/obtenerTodas');
+                const peliculasCargadas = await response.json();
+                setPeliculas(peliculasCargadas);
+            } catch (error) {
+                console.error('Error al obtener las películas:', error);
+            }
+        };
+        obtenerPeliculas();
+    }, []);
 
+    useEffect(() => {
+
+        if (peliculaSeleccionada) {
+        // Simulación de llamada a la base de datos para obtener las películas creadas
+        const obtenerSucursales = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/branch/obtenerSucursales/${peliculaSeleccionada}`);
+                const sucursalesCargadas = await response.json();
+                console.log("Sucursales recibidas:", sucursalesCargadas); // Verifica que sea una lista de sucursales
+                // Asegurarse de que `sucursalesCargadas` sea un array
+                setSucursales(Array.isArray(sucursalesCargadas) ? sucursalesCargadas : []);
+            } catch (error) {
+                console.error('Error al obtener las sucursales:', error);
+                setSucursales([]); // Establece `sucursales` como un array vacío en caso de error
+            }
+        };
+        obtenerSucursales();
+        }
+    }, [peliculaSeleccionada]);
+
+    useEffect(() => {
+        if (peliculaSeleccionada && sucursalSeleccionada) {
+            console.log("Sucursal seleccionada:", sucursalSeleccionada);
+            const obtenerSalasDisponibles = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/salas/obtenerSalasDisponibles/${peliculaSeleccionada}/${sucursalSeleccionada}`);
+                    const salasCargadas = await response.json();
+                    setSala(Array.isArray(salasCargadas) ? salasCargadas : []);
+                } catch (error) {
+                    console.error('Error al obtener las salas disponibles:', error);
+                    setSala([]);
+                }
+            };
+            obtenerSalasDisponibles();
+        }
+    }, [peliculaSeleccionada, sucursalSeleccionada]);
 
     return (
         <Layout>
@@ -123,25 +180,25 @@ const ReservaAsientos = () => {
                     {/* Título de la pantalla */}
                     <h1 className="absolute top-4 left-4 text-2xl font-bold text-white">Comprar Entradas</h1>
                     {mostrarPopup && totalAsientosSeleccionados > 0 && (
-    <div className="absolute bg-white p-4 border border-gray-300 shadow-md w-64">
-        <h3 className="font-bold text-md">Asientos Seleccionados:</h3>
-        <ul className="text-sm">
-            {formatearAsientosSeleccionados().map((asiento, index) => (
-                <li key={index} className="flex justify-between">
-                    <span>{asiento}</span>
-                    <button
-                        className="text-red-500 cursor-pointer"
-                        onClick={() => toggleAsiento(...asientosSeleccionados[index].split('-').map(Number))}
-                    >
-                        X
-                    </button>
-                </li>
-            ))}
-        </ul>
-        <button className="bg-blue-500 text-white py-2 px-4 mt-2 text-sm" onClick={reservarAsientos}>
-            Reservar (${totalPrecio})
-        </button>
-    </div>
+                    <div className="absolute bg-white p-4 border border-gray-300 shadow-md w-64">
+                        <h3 className="font-bold text-md">Asientos Seleccionados:</h3>
+                        <ul className="text-sm">
+                            {formatearAsientosSeleccionados().map((asiento, index) => (
+                                <li key={index} className="flex justify-between">
+                                    <span>{asiento}</span>
+                                    <button
+                                        className="text-red-500 cursor-pointer"
+                                        onClick={() => toggleAsiento(...asientosSeleccionados[index].split('-').map(Number))}
+                                    >
+                                        X
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                        <button className="bg-blue-500 text-white py-2 px-4 mt-2 text-sm" onClick={reservarAsientos}>
+                            Reservar (${totalPrecio})
+                        </button>
+                    </div>
 )}
                 </div>
 
@@ -154,55 +211,90 @@ const ReservaAsientos = () => {
                             <label className="block mb-1">Título:</label>
                             <select
                                 onChange={(e) => { 
-                                    setTitulo(e.target.value); 
-                                    setSucursal(''); 
+                                    setPeliculaSeleccionada(e.target.value);
+                                    setSucursalSeleccionada('');
+                                    setSalaSeleccionada(''); 
                                     setFecha(''); 
                                     setHora('');
                                     setFormato(''); 
                                     setAsientosSeleccionados([]); 
                                 }} 
-                                value={titulo}
+                                value={peliculaSeleccionada}
                                 className="w-full p-2 border rounded"
                             >
-                                <option value="">Seleccionar Título</option>
-                                {titulos.map((tit, index) => (
-                                    <option key={index} value={tit}>{tit}</option>
-                                ))}
+                                <option value="" disabled>Selecciona una película</option>
+                                {peliculas.length > 0 ? (
+                                    peliculas.map((pelicula) => (
+                                        <option key={pelicula.idMovie} value={pelicula.movieName}>{pelicula.movieName}</option>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500">No hay películas disponibles</p>
+                                )}
                             </select>
                         </div>
 
                         {/* Campo de Sucursal */}
                         <div className="flex-1">
                             <label className="block mb-1">Sucursal:</label>
-                            <select 
-                                onChange={(e) => { 
-                                    setSucursal(e.target.value); 
+                            <select
+                                onChange={(e) => {
+                                    setSucursalSeleccionada(e.target.value)
+                                    setSalaSeleccionada(''); 
+                                    setFecha(''); 
+                                    setHora('');
+                                    setFormato(''); 
                                     setAsientosSeleccionados([]); 
-                                }} 
-                                value={sucursal} 
-                                disabled={!titulo}
-                                className="w-full p-2 border rounded"
+                                }}
+                                value={sucursalSeleccionada}
+                                disabled={!peliculaSeleccionada}
+                                className="w-full px-3 py-2 border rounded"
                             >
-                                <option value="">Seleccionar Sucursal</option>
-                                {sucursales.map((suc, index) => (
-                                    <option key={index} value={suc}>{suc}</option>
-                                ))}
+                                <option value="" disabled>Selecciona una sucursal</option>
+                                {Array.isArray(sucursales) && sucursales.length > 0 ? (
+                                    sucursales.map((sucursal,index) => (
+                                        <option key={index} value={sucursal}>{sucursal}</option>
+                                    ))
+                                ) : peliculaSeleccionada ?(
+                                    <p className="text-gray-500">No hay sucursales disponibles</p>
+                                ) : null}
                             </select>
                         </div>
-
+                        <div className="flex-1">
+                            <label className="block mb-1">Sala:</label>
+                            <select 
+                                onChange={(e) => { 
+                                    setSalaSeleccionada(e.target.value);
+                                    setFecha(''); 
+                                    setHora('');
+                                    setFormato(''); 
+                                    setAsientosSeleccionados([]);  
+                                }} 
+                                value={salaSeleccionada} 
+                                disabled={!sucursalSeleccionada}
+                                className="w-full p-2 border rounded"
+                            >
+                                <option value=""disabled>Seleccionar Sala</option>
+                                {salas.map((sala, index) => (
+                                    <option key={index} value={sala}>{sala}</option>
+                                ))}
+                            </select>
+                            
+                        </div>
                         {/* Campo de Fecha */}
                         <div className="flex-1">
                             <label className="block mb-1">Fecha:</label>
                             <select 
                                 onChange={(e) => { 
                                     setFecha(e.target.value); 
-                                    setAsientosSeleccionados([]); 
+                                    setHora('');
+                                    setFormato(''); 
+                                    setAsientosSeleccionados([]);  
                                 }} 
                                 value={fecha} 
-                                disabled={!sucursal}
+                                disabled={!salaSeleccionada}
                                 className="w-full p-2 border rounded"
                             >
-                                <option value="">Seleccionar Fecha</option>
+                                <option value=""disabled>Seleccionar Fecha</option>
                                 {fechas.map((fec, index) => (
                                     <option key={index} value={fec}>{fec}</option>
                                 ))}
@@ -215,6 +307,7 @@ const ReservaAsientos = () => {
                             <select 
                                 onChange={(e) => { 
                                     setHora(e.target.value); 
+                                    setFormato(''); 
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={hora} 

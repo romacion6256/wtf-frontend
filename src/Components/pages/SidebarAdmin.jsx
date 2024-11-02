@@ -75,19 +75,19 @@ const SidebarAdmin = ({ children }) => {
                 {asideOpen && (
                     <aside className="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" style={{ height: "100vh" }}>
                         <a href="/agregaradmin" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-home"></i></span>
+                            <span className="text-2xl"><i className="bx bx-user-plus"></i></span>
                             <span>Agregar Admin</span>
                         </a>
                         <a href="/agregarpelicula" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-cart"></i></span>
+                            <span className="text-2xl"><i className="bx bx-film"></i></span>
                             <span>Agregar Pelicula</span>
                         </a>
                         <a href="/agregarfuncion" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-shopping-bag"></i></span>
+                            <span className="text-2xl"><i className="bx bx-columns"></i></span>
                             <span>Agregar Funcion</span>
                         </a>
                         <a href="/agregarsnack" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-heart"></i></span>
+                            <span className="text-2xl"><i className="bx bx-dish"></i></span>
                             <span>Agregar Snack</span>
                         </a> 
                         <button onClick={handleLogout} className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">

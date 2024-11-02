@@ -55,6 +55,11 @@ const AgregarPelicula = () => {
     };
 
     const handleGuardarPelicula = async () => {
+        
+        if (!titulo || !año || !director || !duracion || !generoSeleccionado ) {
+            alert('Por favor, completa todos los campos antes de guardar la pelicula.');
+            return; // Detiene la ejecución si hay campos vacíos
+        }
         const nuevaPelicula = {
             movieName: titulo,
             movieYear: año,
@@ -133,16 +138,16 @@ const AgregarPelicula = () => {
                                     <div className="flex justify-between items-center">
                                         <div>
                                             <div className="mb-1">
-                                                <strong>Título:</strong>
-                                                <div>{pelicula.movieName}</div>
+                                                <strong>Título: </strong>{pelicula.movieName}
+                                               
                                             </div>
                                             <div className="mb-1">
-                                                <strong>Año:</strong>
-                                                <div>{pelicula.year}</div>
+                                                <strong>Año: </strong>{pelicula.year}
+                                                
                                             </div>
                                             <div className="mb-1">
-                                                <strong>Director:</strong>
-                                                <div>{pelicula.directorName}</div>
+                                                <strong>Director: </strong>{pelicula.directorName}
+                                                
                                             </div>
                                         </div>
                                         <button

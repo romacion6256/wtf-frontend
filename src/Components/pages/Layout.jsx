@@ -88,15 +88,15 @@ const Layout = ({ children }) => {
                             <span>Cartelera</span>
                         </a>
                         <a href="misreservas" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-cart"></i></span>
+                            <span className="text-2xl"><i className="bx bx-shopping-bag"></i></span>
                             <span>Mis Reservas</span>
                         </a>
                         <a href="reservaasientos" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-shopping-bag"></i></span>
+                            <span className="text-2xl"><i className="bx bx-store-alt"></i></span>
                             <span>Comprar Entradas</span>
                         </a>
                         <a href="metodopago" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
-                            <span className="text-2xl"><i className="bx bx-money"></i></span>
+                            <span className="text-2xl"><i className="bx bx-credit-card"></i></span>
                             <span>Método de Pago</span>
                         </a>
                         <a href="calificar" className="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
