@@ -1,7 +1,7 @@
 import React, { useState, useEffect  } from 'react';
 import SidebarAdmin from './SidebarAdmin';
 import '../../index.css';
-
+import  Alerta  from '../elements/Alerta';
 
 
 
@@ -15,6 +15,8 @@ const AgregarPelicula = () => {
     const [generoSeleccionado, setGeneroSeleccionado] = useState('');
     const [peliculas, setPeliculas] = useState([]);
     const [cargandoPeliculas, setCargandoPeliculas] = useState(true); // Estado para controlar la carga
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("");
 
 
     useEffect(() => {
@@ -59,12 +61,15 @@ const AgregarPelicula = () => {
         setDuracion('');
         setAño('');
         setGeneroSeleccionado('');
+        setAlertMessage('');
+        setAlertType('');
     };
 
     const handleGuardarPelicula = async () => {
         
         if (!titulo || !año || !director || !duracion || !generoSeleccionado ) {
-            alert('Por favor, completa todos los campos antes de guardar la pelicula.');
+            setAlertMessage('Por favor, completa todos los campos antes de guardar la pelicula.');
+            setAlertType('Atencion');
             return; // Detiene la ejecución si hay campos vacíos
         }
         const nuevaPelicula = {
@@ -86,7 +91,8 @@ const AgregarPelicula = () => {
             });
     
             if (response.ok) {
-                alert('Película agregada correctamente');
+                setAlertMessage('Película agregada correctamente');
+                setAlertType('Completado');
                 setCargandoPeliculas(true);
                 const peliculasActualizadas = await fetch('http://localhost:8080/api/movie/obtenerTodas');
                 setPeliculas(await peliculasActualizadas.json());
@@ -114,7 +120,6 @@ const AgregarPelicula = () => {
             });
 
             if (response.ok) {
-                alert('Película eliminada correctamente');
                 setCargandoPeliculas(true);
                 // Actualizar la lista de películas
                 //setPeliculas(peliculas.filter((pelicula) => pelicula.id !== idPelicula));
@@ -248,6 +253,7 @@ const AgregarPelicula = () => {
                                     
                                 </select>
                             </div>
+                            {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                             <button
                                 onClick={handleGuardarPelicula}
                                 className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 mr-2"

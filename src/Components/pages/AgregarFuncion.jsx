@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SidebarAdmin from './SidebarAdmin';
 import '../../index.css';
+import Alerta from '../elements/Alerta';
 
 
 const AgregarFuncion = () => {
@@ -19,6 +20,9 @@ const AgregarFuncion = () => {
     const [Formato, setFormato] = useState('');
     const [Subtitulada, setSubtitulada] = useState('');
     const [funciones, setFunciones] = useState([]);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("");
+
 
     const sub = ['Si', 'No'];
 
@@ -102,13 +106,21 @@ const AgregarFuncion = () => {
         setHora('');
         setFormato('');
         setSubtitulada('');
+        setAlertMessage("");
+        setAlertType("");
     };
 
     const handleGuardarFuncion = async () => {
         // Verifica si alguno de los valores es null o vacío
         if (!peliculaSeleccionada || !Formato || !salaSeleccionada || !sucursalSeleccionada || !Fecha || !Hora || !Subtitulada) {
-            alert('Por favor, completa todos los campos antes de guardar la función.');
+            setAlertMessage('Por favor, completa todos los campos antes de guardar la función.');
+            setAlertType('Atencion');
             return; // Detiene la ejecución si hay campos vacíos
+        }
+        if (Formato !== '2D' && Formato !== '3D') {
+            setAlertMessage('El formato debe ser 2D o 3D');
+            setAlertType('Atencion');
+            return;
         }
         const nuevaFuncion = {
             movie: peliculaSeleccionada,
@@ -132,7 +144,8 @@ const AgregarFuncion = () => {
             });
     
             if (response.ok) {
-                alert('Funcion agregada correctamente');
+                setAlertMessage('Funcion agregada correctamente');
+                setAlertType('Completado');
                 setCargandoFunciones(true);
                 const funcionesActualizadas = await fetch('http://localhost:8080/api/function/obtenerTodas');
                 setFunciones(await funcionesActualizadas.json());
@@ -144,7 +157,6 @@ const AgregarFuncion = () => {
         } finally {
             handleCerrarPopup();
             setCargandoFunciones(false); // Finaliza el cargador tras obtener o fallar
-           
         } 
         
     };
@@ -331,6 +343,7 @@ const AgregarFuncion = () => {
                     </select>
                 </div>
             </div>
+            {alertMessage && <Alerta message={alertMessage} type={alertType} />}
             <button
                 onClick={handleGuardarFuncion}
                 className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 mr-2"

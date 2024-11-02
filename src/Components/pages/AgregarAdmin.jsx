@@ -5,14 +5,13 @@ import Alerta from "../elements/Alerta";
 
 
 const AgregarAdmin = () => {
-    const [usuario, setUsuario] = useState('');
+    
+  const [usuario, setUsuario] = useState('');
     const [email, setEmail] = useState('');
     const [contraseña, setContraseña] = useState('');
     const [alertMessage, setAlertMessage] = useState("");
     const [alertType, setAlertType] = useState("");
    
-    
-
     const handleRegister = async (e) => {
         e.preventDefault();
     
@@ -49,18 +48,24 @@ const AgregarAdmin = () => {
           if (response.status === 200) {
             console.log("Se ha registrado el usuario", usuario)
             console.log("Usuario registrado exitosamente: ", response.data);
-            alert('Administrador creado exitosamente');
+            setAlertMessage('Administrador creado exitosamente');
+            setAlertType("Completado");
+            setTimeout(() => {
+              setAlertMessage("");
+              setAlertType("");
+              setContraseña("");
+              setEmail("");
+              setUsuario("");
+            }, 3000);
 
           } else {
             setAlertMessage(response.data);
             setAlertType("Error");
-            alert('Error');
           }
         } catch (error) {
           console.error("Error de red: ", error);
           setAlertMessage("Error al registrar el usuario. Por favor, intente nuevamente.");
           setAlertType("Error");
-          alert('Error');
         }
       };
 
@@ -80,6 +85,7 @@ const AgregarAdmin = () => {
                     <label className="block text-sm font-medium mb-1">Contrasena</label>
                     <input type="email" value={contraseña} onChange={(e) => setContraseña(e.target.value)} className="w-full px-3 py-2 border rounded" />
                 </div>
+                {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                 <button onClick={handleRegister} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Guardar</button>
             </div>
         </SidebarAdmin>

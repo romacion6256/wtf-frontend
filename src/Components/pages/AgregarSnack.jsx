@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import SidebarAdmin from './SidebarAdmin';
 import '../../index.css';
+import Alerta from '../elements/Alerta';
 
 const AgregarSnack = () => {
     const [showPopup, setShowPopup] = useState(false);
@@ -8,7 +9,8 @@ const AgregarSnack = () => {
     const [precio, setPrecio] = useState('');
     const [snacks, setSnacks] = useState([]);
     const [cargandoSnacks, setCargandoSnacks] = useState(true); // Estado para controlar la carga
-
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
 
 
     const handleAgregarClick = () => {
@@ -19,12 +21,15 @@ const AgregarSnack = () => {
         setShowPopup(false);
         setNombreProducto('');
         setPrecio('');
+        setAlertMessage('');
+        setAlertType('');
     };
 
     const handleGuardarSnack = async () => {
         // Verifica si alguno de los valores es null o vacío
         if (!nombreProducto || !precio ) {
-            alert('Por favor, completa todos los campos antes de guardar el snack.');
+            setAlertMessage('Por favor, completa todos los campos antes de guardar el snack.');
+            setAlertType('Atencion');
             return; // Detiene la ejecución si hay campos vacíos
         }
         const nuevoSnack = {
@@ -43,7 +48,8 @@ const AgregarSnack = () => {
             });
     
             if (response.ok) {
-                alert('Snack agregado correctamente');
+                setAlertMessage('Snack agregado correctamente');
+                setAlertType('Completado');
                 setCargandoSnacks(true);
                 const snacksActualizadas = await fetch('http://localhost:8080/api/snack/listarSnacks');
                 setSnacks(await snacksActualizadas.json());
@@ -179,6 +185,7 @@ const AgregarSnack = () => {
                                     placeholder="Ingrese el precio en pesos uruguayos"
                                 />
                             </div>
+                            {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                             <button
                                 onClick={handleGuardarSnack}
                                 className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 mr-2"

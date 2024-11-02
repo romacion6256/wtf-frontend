@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SidebarAdmin from './SidebarAdmin';
 import Layout from './Layout';
 import axios from "axios";
+import Alerta from "../elements/Alerta";
 
 const MisDatos = () => {
     const [nombreUsuario, setNombreUsuario] = useState('');
@@ -15,6 +16,8 @@ const MisDatos = () => {
     const [celular, setCelular] = useState('');
     const [direccion, setDireccion] = useState('');
     const [contrasenia, setContrasenia] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
 
     const fetchUserData = async (id) => {
         try {
@@ -53,10 +56,12 @@ const MisDatos = () => {
                 
             };
             await axios.put(`http://localhost:8080/api/users/${userId}`, cambios);
-            alert('Datos actualizados con éxito');
+            setAlertMessage('Datos actualizados con éxito');
+            setAlertType('Completado');
             console.log("Datos actualizados con éxito");
         } catch (error) {
-            alert('Error algunos datos inconsistentes');
+            setAlertMessage('Error algunos datos inconsistentes');
+            setAlertType('Error');
             console.error("Error al actualizar los datos:", error.response?.data || error.message);
         }
     };
@@ -117,6 +122,7 @@ const MisDatos = () => {
                     <label className="block text-sm font-medium mb-1">Direccion</label>
                     <input type="email" value={direccion} onChange={(e) => setDireccion(e.target.value)} className="w-full px-3 py-2 border rounded" />
                 </div>
+                {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                 {/* Otros campos: nombre, apellido, cédula, celular, dirección, contraseña */}
                 <button onClick={handleGuardar} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Guardar</button>
             </div>

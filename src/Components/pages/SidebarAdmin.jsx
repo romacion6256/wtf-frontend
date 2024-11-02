@@ -45,7 +45,7 @@ const SidebarAdmin = ({ children }) => {
                     <button type="button" className="text-3xl" onClick={toggleAside}>
                         <i className="bx bx-menu"></i>
                     </button>
-                    <div className="text-lg font-semibold">WTFun</div>
+                    <div className="text-lg font-semibold"><a href="/">WTFun</a></div>
                 </div>
 
                 <div className="relative flex items-center space-x-2">
