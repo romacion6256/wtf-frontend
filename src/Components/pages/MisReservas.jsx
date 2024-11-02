@@ -4,87 +4,22 @@ import 'boxicons/css/boxicons.min.css'; // Importa Boxicons
 
 const MisReservas = () => {
     // Ejemplo de reservas solo para visualización
-    const reservas = [
-        {
-            titulo: 'Avatar: The Way of Water',
-            sucursal: 'Cinepolis Plaza',
-            fecha: '2024-10-10',
-            hora: '19:00',
-            formato: '2D Sub'
-        },
-        {
-            titulo: 'Spider-Man: No Way Home',
-            sucursal: 'Cinemex Reforma',
-            fecha: '2024-10-12',
-            hora: '21:30',
-            formato: '3D Esp'
-        },
-        {
-            titulo: 'Guardians of the Galaxy Vol. 3',
-            sucursal: 'Cinepolis Plaza',
-            fecha: '2024-10-15',
-            hora: '18:00',
-            formato: '2D Sub'
-        },
-        {
-            titulo: 'Dune',
-            sucursal: 'Cinemex Reforma',
-            fecha: '2024-10-18',
-            hora: '20:00',
-            formato: 'IMAX'
-        },
-        {
-            titulo: 'Black Panther: Wakanda Forever',
-            sucursal: 'Cinepolis Interlomas',
-            fecha: '2024-10-20',
-            hora: '17:30',
-            formato: '3D Dub'
-        },
-        {
-            titulo: 'The Batman',
-            sucursal: 'Cinemex Perisur',
-            fecha: '2024-10-22',
-            hora: '21:00',
-            formato: '2D Sub'
-        },
-        {
-            titulo: 'Fast X',
-            sucursal: 'Cinepolis Plaza',
-            fecha: '2024-10-25',
-            hora: '19:15',
-            formato: '4D'
-        },
-        {
-            titulo: 'The Flash',
-            sucursal: 'Cinemex Reforma',
-            fecha: '2024-10-27',
-            hora: '22:00',
-            formato: '3D Esp'
-        },
-        {
-            titulo: 'John Wick: Chapter 4',
-            sucursal: 'Cinepolis Galerías',
-            fecha: '2024-10-30',
-            hora: '20:30',
-            formato: '2D Sub'
-        },
-        {
-            titulo: 'Mission: Impossible - Dead Reckoning',
-            sucursal: 'Cinemex Santa Fe',
-            fecha: '2024-11-02',
-            hora: '18:45',
-            formato: 'IMAX'
-        },
-        {
-            titulo: 'Oppenheimer',
-            sucursal: 'Cinepolis Altaria',
-            fecha: '2024-11-05',
-            hora: '19:30',
-            formato: '2D Sub'
-        }
-        
-        
-    ];
+    const [reservas, setReservas] = useState([]);
+    
+    // Obtener reservas
+    useEffect(() => {
+        const obtenerReservas = async () => {
+            try {
+                const userId = JSON.parse(localStorage.getItem("user")).id;
+                const response = await fetch(`http://localhost:8080/api/reservation/misReservas/${userId}`);
+                const reservasCargadas = await response.json();
+                setReservas(reservasCargadas);
+            } catch (error) {
+                console.error('Error al obtener las reservas:', error);
+            }
+        };
+        obtenerReservas();
+    }, []);
 
     return (
         <Layout>
@@ -94,8 +29,8 @@ const MisReservas = () => {
                     <p>No tienes reservas en este momento.</p>
                 ) : (
                     <ul className="space-y-4">
-                        {reservas.map((reserva, index) => (
-                            <li key={index} className="flex justify-between items-center border-b pb-2 mb-2">
+                        {reservas.map((reserva) => (
+                            <li key={reserva.idReservation} className="flex justify-between items-center border-b pb-2 mb-2">
                                 <div className="flex flex-col">
                                     <span className="font-medium">{reserva.titulo}</span>
                                     <span className="text-gray-600">Sucursal: {reserva.sucursal}</span>

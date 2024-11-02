@@ -11,6 +11,7 @@ import Layout from './Layout';
 const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
 const horarios = ['19:00', '21:30', '18:00'];
 const formatos = ['2D Sub', '3D Esp']
+const sub = ["Si", "No"]
 const precioAsiento = 100;
 const snacks = [
     { id: 1, nombre: 'Popcorn', precio: 50},
@@ -27,6 +28,8 @@ const ReservaAsientos = () => {
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState('');
     const [salas, setSala] = useState([]);
     const [salaSeleccionada, setSalaSeleccionada] = useState('');
+    const [subtitulada, setSubtitulada] = useState('');
+    const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState([]);
   
     //const [titulo, setTitulo] = useState('');
     //const [sucursal, setSucursal] = useState('');
@@ -77,11 +80,11 @@ const ReservaAsientos = () => {
         setAsientosSeleccionados(nuevoEstado);
     };
 
-    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fecha && hora && formato;
+    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fecha && hora && formato && subtitulada;
     const totalAsientosSeleccionados = asientosSeleccionados.length;
     const totalPrecio = totalAsientosSeleccionados * precioAsiento;
 
-    const mostrarPopup = sucursalSeleccionada && fecha && hora && formato && asientosSeleccionados.length > 0;
+    const mostrarPopup = sucursalSeleccionada && fecha && hora && formato && subtitulada && asientosSeleccionados.length > 0;
 
     const aumentarCantidad = (id) => {
         setCantidadSnacks((prev) => ({
@@ -217,6 +220,7 @@ const ReservaAsientos = () => {
                                     setFecha(''); 
                                     setHora('');
                                     setFormato(''); 
+                                    setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={peliculaSeleccionada}
@@ -243,6 +247,7 @@ const ReservaAsientos = () => {
                                     setFecha(''); 
                                     setHora('');
                                     setFormato(''); 
+                                    setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }}
                                 value={sucursalSeleccionada}
@@ -267,6 +272,7 @@ const ReservaAsientos = () => {
                                     setFecha(''); 
                                     setHora('');
                                     setFormato(''); 
+                                    setSubtitulada('');
                                     setAsientosSeleccionados([]);  
                                 }} 
                                 value={salaSeleccionada} 
@@ -280,7 +286,9 @@ const ReservaAsientos = () => {
                             </select>
                             
                         </div>
+                        </div>
                         {/* Campo de Fecha */}
+                        <div className="flex space-x-4 mb-4">
                         <div className="flex-1">
                             <label className="block mb-1">Fecha:</label>
                             <select 
@@ -288,6 +296,7 @@ const ReservaAsientos = () => {
                                     setFecha(e.target.value); 
                                     setHora('');
                                     setFormato(''); 
+                                    setSubtitulada('');
                                     setAsientosSeleccionados([]);  
                                 }} 
                                 value={fecha} 
@@ -308,6 +317,7 @@ const ReservaAsientos = () => {
                                 onChange={(e) => { 
                                     setHora(e.target.value); 
                                     setFormato(''); 
+                                    setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={hora} 
@@ -326,6 +336,7 @@ const ReservaAsientos = () => {
                             <select 
                                 onChange={(e) => { 
                                     setFormato(e.target.value); 
+                                    setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={formato} 
@@ -335,6 +346,25 @@ const ReservaAsientos = () => {
                                 <option value="">Seleccionar Formato</option>
                                 {formatos.map((format, index) => (
                                     <option key={index} value={format}>{format}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="flex space-x-4 mb-4">
+                    <div className="flex-1/3">
+                            <label className="block mb-1">Subtitulada:</label>
+                            <select 
+                                onChange={(e) => { 
+                                    setSubtitulada(e.target.value); 
+                                    setAsientosSeleccionados([]); 
+                                }} 
+                                value={subtitulada} 
+                                disabled={!formato}
+                                className="w-full p-2 border rounded"
+                            >
+                                <option value="">Seleccionar Opcion</option>
+                                {sub.map((subt, index) => (
+                                    <option key={index} value={subt}>{subt}</option>
                                 ))}
                             </select>
                         </div>
