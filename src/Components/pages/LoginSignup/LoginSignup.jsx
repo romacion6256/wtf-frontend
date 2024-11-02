@@ -69,7 +69,7 @@ const LoginSignup = () => {
             
             //redireccionamos a la pagina correspondiente segun el tipo de usuario
             if (role === "CLIENT") {
-              navigate("/main");
+              navigate("/");
             } else if (role === "ADMIN") {
               navigate("/admin");
             }

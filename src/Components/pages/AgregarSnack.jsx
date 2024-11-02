@@ -1,11 +1,16 @@
 import React, { useState, useEffect} from 'react';
 import SidebarAdmin from './SidebarAdmin';
+import '../../index.css';
 
 const AgregarSnack = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [nombreProducto, setNombreProducto] = useState('');
     const [precio, setPrecio] = useState('');
     const [snacks, setSnacks] = useState([]);
+    const [cargandoSnacks, setCargandoSnacks] = useState(true); // Estado para controlar la carga
+
+
+
     const handleAgregarClick = () => {
         setShowPopup(true);
     };
@@ -39,6 +44,7 @@ const AgregarSnack = () => {
     
             if (response.ok) {
                 alert('Snack agregado correctamente');
+                setCargandoSnacks(true);
                 const snacksActualizadas = await fetch('http://localhost:8080/api/snack/listarSnacks');
                 setSnacks(await snacksActualizadas.json());
             } else {
@@ -46,19 +52,25 @@ const AgregarSnack = () => {
             }
         } catch (error) {
             console.error('Error en la solicitud:', error);
-        }
-    
-        handleCerrarPopup();
+        } finally {
+            handleCerrarPopup();
+            setCargandoSnacks(false); // Finaliza el cargador tras obtener o fallar
+           
+        } 
     };
     
         useEffect(() => {
             const obtenerSnacks = async () => {
+                setCargandoSnacks(true); 
+
                 try {
                     const response = await fetch('http://localhost:8080/api/snack/listarSnacks');
                     const snacksCargadas = await response.json();
                     setSnacks(snacksCargadas);
                 } catch (error) {
                     console.error('Error al obtener los snacks:', error);
+                } finally {
+                    setCargandoSnacks(false); // Termina el cargador
                 }
             };
             obtenerSnacks();
@@ -76,6 +88,8 @@ const AgregarSnack = () => {
 
             if (response.ok) {
                 alert('Snack eliminado correctamente');
+                setCargandoSnacks(true);
+
                 // Actualizar la lista de películas
                 //setPeliculas(peliculas.filter((pelicula) => pelicula.id !== idPelicula));
                 const snacksActualizadas = await fetch('http://localhost:8080/api/snack/listarSnacks');
@@ -85,6 +99,8 @@ const AgregarSnack = () => {
             }
         } catch (error) {
             console.error('Error en la solicitud de eliminación:', error);
+        } finally {
+            setCargandoSnacks(false); // Termina el cargador
         }
     };
 
@@ -102,9 +118,13 @@ const AgregarSnack = () => {
                 {/* Mostrar la lista de películas */}
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold mb-2">Lista de Snacks:</h3>
+                    {cargandoSnacks ? (
+                        <div className="flex justify-center items-center" style={{ height: "100px" }}>
+                            <div className="loader" /> {/* Círculo de carga */}
+                        </div>
+                    ) : snacks.length > 0 ? (
                     <ul>
-                        {snacks.length > 0 ? (
-                            snacks.map((snack) => (
+                        {snacks.map((snack) => (
                                 <li key={snack.snackId} className="mb-6 border-b pb-4">
                                     <div className="flex justify-between items-center">
                                         <div>
@@ -125,12 +145,15 @@ const AgregarSnack = () => {
                                         </button>
                                     </div>
                                 </li>
-                            ))
+                            ))}
+                            </ul>
                         ) : (
-                            <p>No hay snacks disponibles</p>
+                            <p>No hay Snacks disponibles</p>
                         )}
-                    </ul>
-                </div>
+                    
+                
+                        
+                    </div>
 
                 {showPopup && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

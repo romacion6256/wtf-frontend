@@ -1,5 +1,7 @@
 import React, { useState, useEffect  } from 'react';
 import SidebarAdmin from './SidebarAdmin';
+import '../../index.css';
+
 
 
 
@@ -12,6 +14,7 @@ const AgregarPelicula = () => {
     const [año, setAño] = useState('');
     const [generoSeleccionado, setGeneroSeleccionado] = useState('');
     const [peliculas, setPeliculas] = useState([]);
+    const [cargandoPeliculas, setCargandoPeliculas] = useState(true); // Estado para controlar la carga
 
 
     useEffect(() => {
@@ -34,12 +37,16 @@ const AgregarPelicula = () => {
     // Obtener películas
     useEffect(() => {
         const obtenerPeliculas = async () => {
+            setCargandoPeliculas(true); 
+
             try {
                 const response = await fetch('http://localhost:8080/api/movie/obtenerTodas');
                 const peliculasCargadas = await response.json();
                 setPeliculas(peliculasCargadas);
             } catch (error) {
                 console.error('Error al obtener las películas:', error);
+            } finally {
+                setCargandoPeliculas(false); // Termina el cargador
             }
         };
         obtenerPeliculas();
@@ -80,6 +87,7 @@ const AgregarPelicula = () => {
     
             if (response.ok) {
                 alert('Película agregada correctamente');
+                setCargandoPeliculas(true);
                 const peliculasActualizadas = await fetch('http://localhost:8080/api/movie/obtenerTodas');
                 setPeliculas(await peliculasActualizadas.json());
             } else {
@@ -87,9 +95,12 @@ const AgregarPelicula = () => {
             }
         } catch (error) {
             console.error('Error en la solicitud:', error);
+        } finally {
+            handleCerrarPopup();
+            setCargandoPeliculas(false); // Finaliza el cargador tras obtener o fallar
+           
         }
-    
-        handleCerrarPopup();
+        
     };
 
     const handleEliminarPelicula = async (idPelicula) => {
@@ -104,6 +115,7 @@ const AgregarPelicula = () => {
 
             if (response.ok) {
                 alert('Película eliminada correctamente');
+                setCargandoPeliculas(true);
                 // Actualizar la lista de películas
                 //setPeliculas(peliculas.filter((pelicula) => pelicula.id !== idPelicula));
                 const peliculasActualizadas = await fetch('http://localhost:8080/api/movie/obtenerTodas');
@@ -113,6 +125,8 @@ const AgregarPelicula = () => {
             }
         } catch (error) {
             console.error('Error en la solicitud de eliminación:', error);
+        } finally {
+            setCargandoPeliculas(false); // Termina el cargador
         }
     };
 
@@ -131,9 +145,13 @@ const AgregarPelicula = () => {
                 {/* Mostrar la lista de películas */}
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold mb-2">Lista de Películas</h3>
+                    {cargandoPeliculas ? (
+                        <div className="flex justify-center items-center" style={{ height: "100px" }}>
+                            <div className="loader" /> {/* Círculo de carga */}
+                        </div>
+                    ) : peliculas.length > 0 ? (
                     <ul>
-                        {peliculas.length > 0 ? (
-                            peliculas.map((pelicula) => (
+                            {peliculas.map((pelicula) => (
                                 <li key={pelicula.idMovie} className="mb-6 border-b pb-4">
                                     <div className="flex justify-between items-center">
                                         <div>
@@ -158,11 +176,14 @@ const AgregarPelicula = () => {
                                         </button>
                                     </div>
                                 </li>
-                            ))
-                        ) : (
-                            <p>No hay películas disponibles</p>
-                        )}
-                    </ul>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No hay peliculas disponibles</p>
+                    )}
+                
+            
+                    
                 </div>
 
                 {showPopup && (

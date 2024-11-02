@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
 import LoginSignup from './Components/pages/LoginSignup/LoginSignup';
-import MainCine from './Components/pages/MainCine';
+//import MainCine from './Components/pages/MainCine';
 import Cartelera from './Components/pages/Cartelera';
 import MisReservas from './Components/pages/MisReservas'
 import ReservaAsientos from './Components/pages/ReservaAsientos';
@@ -34,10 +34,10 @@ const App = () => {
               path="/misdatos" 
               element={<AuthenticatedRoute element={<MisDatos />} roles={['CLIENT', 'ADMIN']} />} 
             />
-            <Route 
+            {/* <Route 
               path="/main" 
               element={<AuthenticatedRoute element={<MainCine />} roles={['CLIENT']} />}
-            />
+            /> */}
             <Route 
               path="/metodopago" 
               element={<AuthenticatedRoute element={<MetodoPago />} roles={['CLIENT']} />}

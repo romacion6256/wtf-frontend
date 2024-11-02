@@ -1,28 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from './Layout'; // Importa el componente Layout
-import { useUser } from '../../Components/UserContext';
-import { useNavigate } from "react-router-dom";
+import '../../index.css';
 
 const Cartelera = () => {
-    
+    const [peliculas, setPeliculas] = useState([]);
+    const [cargando, setCargando] = useState(true);
+
+    // Obtener películas
+    useEffect(() => {
+        const obtenerPeliculas = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/movie/obtenerTodas');
+                const peliculasCargadas = await response.json();
+                setPeliculas(peliculasCargadas);
+            } catch (error) {
+                console.error('Error al obtener las películas:', error);
+            } finally {
+                setCargando(false); // Finaliza la carga
+            }
+        };
+        obtenerPeliculas();
+    }, []);
+
     return (
         <Layout active="cartelera">
-            <div className="grid grid-cols-3 gap-4">
-            {/* <h2 className="text-xl font-semibold mb-4">Cartelera</h2> */}
-                {/* Contenido de la cartelera */}
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 1</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 2</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 3</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 4</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 5</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 6</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 7</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 8</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 9</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 10</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 11</div>
-                <div className="bg-gray-200 p-4 rounded-lg" style={{ height: "300px" }}>Imagen 12</div>
-            </div>
+            <h2 className="text-2xl font-semibold mb-4">Cartelera</h2>
+            
+            {cargando ? (
+                // Círculo de carga mientras se obtienen las películas
+                <div className="flex justify-center items-center" style={{ height: "200px" }}>
+                    <div className="loader" /> {/* Clase para el círculo de carga */}
+                </div>
+            ) : peliculas.length === 0 ? (
+                // Mensaje si no hay películas disponibles
+                <div className="text-center text-lg font-medium">
+                    No hay películas disponibles.
+                </div>
+            ) : (
+                // Cuadrícula de películas
+                <div className="grid grid-cols-3 gap-4">
+                    {peliculas.map((pelicula) => (
+                        <div
+                            key={pelicula.idMovie} // Usa un key único por cada película
+                            className="bg-gray-200 p-4 rounded-lg flex items-center justify-center"
+                            style={{ height: "200px" }}
+                        >
+                            {pelicula.movieName} {/* Muestra el nombre de la película */}
+                        </div>
+                    ))}
+                </div>
+            )}
         </Layout>
     );
 };

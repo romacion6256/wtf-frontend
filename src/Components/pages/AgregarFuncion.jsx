@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SidebarAdmin from './SidebarAdmin';
+import '../../index.css';
 
 
 const AgregarFuncion = () => {
@@ -11,6 +12,7 @@ const AgregarFuncion = () => {
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState('');
     const [salas, setSala] = useState([]);
     const [salaSeleccionada, setSalaSeleccionada] = useState('');
+    const [cargandoFunciones, setCargandoFunciones] = useState(true); // Estado para controlar la carga
 
     const [Fecha, setFecha] = useState('');
     const [Hora, setHora] = useState('');
@@ -23,12 +25,15 @@ const AgregarFuncion = () => {
     // Obtener funciones
     useEffect(() => {
         const obtenerFunciones = async () => {
+            setCargandoFunciones(true); 
             try {
                 const response = await fetch('http://localhost:8080/api/function/obtenerTodas');
                 const funcionesCargadas = await response.json();
                 setFunciones(funcionesCargadas);
             } catch (error) {
                 console.error('Error al obtener las funciones:', error);
+            } finally {
+                setCargandoFunciones(false); // Termina el cargador
             }
         };
         obtenerFunciones();
@@ -128,6 +133,7 @@ const AgregarFuncion = () => {
     
             if (response.ok) {
                 alert('Funcion agregada correctamente');
+                setCargandoFunciones(true);
                 const funcionesActualizadas = await fetch('http://localhost:8080/api/function/obtenerTodas');
                 setFunciones(await funcionesActualizadas.json());
             } else {
@@ -135,9 +141,12 @@ const AgregarFuncion = () => {
             }
         } catch (error) {
             console.error('Error en la solicitud:', error);
-        }
-    
-        handleCerrarPopup();
+        } finally {
+            handleCerrarPopup();
+            setCargandoFunciones(false); // Finaliza el cargador tras obtener o fallar
+           
+        } 
+        
     };
     const handleEliminarFuncion = async (idFunction) => {
         if (!idFunction) {
@@ -151,6 +160,7 @@ const AgregarFuncion = () => {
 
             if (response.ok) {
                 alert('Funcion eliminada correctamente');
+                setCargandoFunciones(true);
                 // Actualizar la lista de películas
                 //setPeliculas(peliculas.filter((pelicula) => pelicula.id !== idPelicula));
                 const funcionesActualizadas = await fetch('http://localhost:8080/api/function/obtenerTodas');
@@ -160,6 +170,8 @@ const AgregarFuncion = () => {
             }
         } catch (error) {
             console.error('Error en la solicitud de eliminación:', error);
+        } finally {
+            setCargandoFunciones(false); // Termina el cargador
         }
     };
 
@@ -174,44 +186,39 @@ const AgregarFuncion = () => {
                     Agregar
                 </button>
 
-                {/* Mostrar la lista de películas */}
+                {/* Mostrar la lista de funciones */}
                 <div className="mt-4">
-                    
                     <h3 className="text-lg font-semibold mb-2">Lista de Funciones</h3>
-                    
-                    <ul>
-                        {funciones.length > 0 ? (
-                            funciones.map((funcion) => (
+                    {cargandoFunciones ? (
+                        <div className="flex justify-center items-center" style={{ height: "100px" }}>
+                            <div className="loader" /> {/* Círculo de carga */}
+                        </div>
+                    ) : funciones.length > 0 ? (
+                        <ul>
+                            {funciones.map((funcion) => (
                                 <li key={funcion.idFunction} className="mb-6 border-b pb-4">
                                     <div className="flex justify-between items-center">
                                         <div>
                                             <div className="mb-1">
                                                 <strong>Título: </strong>{funcion.movie.movieName}
-                                                
                                             </div>
                                             <div className="mb-1">
                                                 <strong>Sucursal: </strong>{funcion.room.branch.branchName}
-                                              
                                             </div>
                                             <div className="mb-1">
                                                 <strong>Sala: </strong>{funcion.room.number}
-                                              
                                             </div>
                                             <div className="mb-1">
                                                 <strong>Fecha: </strong>{funcion.date}
-                                     
                                             </div>
                                             <div className="mb-1">
                                                 <strong>Hora: </strong>{funcion.time}
-                                                
                                             </div>
                                             <div className="mb-1">
                                                 <strong>Formato: </strong>{funcion.format}
-                                               
                                             </div>
                                             <div className="mb-1">
                                                 <strong>Subtitulada: </strong>{funcion.subtitled ? 'Sí' : 'No'}
-                                               
                                             </div>
                                         </div>
                                         <button
@@ -222,11 +229,14 @@ const AgregarFuncion = () => {
                                         </button>
                                     </div>
                                 </li>
-                            ))
-                        ) : (
-                            <p>No hay funciones disponibles</p>
-                        )}
-                    </ul>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No hay funciones disponibles</p>
+                    )}
+                
+            
+                    
                 </div>
 
 
