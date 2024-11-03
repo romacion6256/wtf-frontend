@@ -8,7 +8,7 @@ import Layout from './Layout';
 //const titulos = ['Película 1', 'Película 2', 'Película 3'];
 
 //const sucursales = ['Punta Carretas', 'Ciudad Vieja', 'Pocitos','Carrasco','Tres Cruces','Centro','Malvin','Buceo'];
-const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
+//const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
 const horarios = ['19:00', '21:30', '18:00'];
 const formatos = ['2D Sub', '3D Esp']
 const sub = ["Si", "No"]
@@ -28,12 +28,14 @@ const ReservaAsientos = () => {
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState('');
     const [salas, setSala] = useState([]);
     const [salaSeleccionada, setSalaSeleccionada] = useState('');
+    const [fechas, setFechas] = useState([]);
+    const [fechaSeleccionada, setFechaSeleccionada] = useState('');
     const [subtitulada, setSubtitulada] = useState('');
     const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState([]);
   
     //const [titulo, setTitulo] = useState('');
     //const [sucursal, setSucursal] = useState('');
-    const [fecha, setFecha] = useState('');
+    //const [fecha, setFecha] = useState('');
     const [hora, setHora] = useState('');
     const [formato, setFormato] = useState('');
     const [asientosSeleccionados, setAsientosSeleccionados] = useState([]);
@@ -80,11 +82,11 @@ const ReservaAsientos = () => {
         setAsientosSeleccionados(nuevoEstado);
     };
 
-    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fecha && hora && formato && subtitulada;
+    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fechas && hora && formato && subtitulada;
     const totalAsientosSeleccionados = asientosSeleccionados.length;
     const totalPrecio = totalAsientosSeleccionados * precioAsiento;
 
-    const mostrarPopup = sucursalSeleccionada && fecha && hora && formato && subtitulada && asientosSeleccionados.length > 0;
+    const mostrarPopup = sucursalSeleccionada && fechas && hora && formato && subtitulada && asientosSeleccionados.length > 0;
 
     const aumentarCantidad = (id) => {
         setCantidadSnacks((prev) => ({
@@ -172,6 +174,23 @@ const ReservaAsientos = () => {
         }
     }, [peliculaSeleccionada, sucursalSeleccionada]);
 
+    useEffect(() => {
+        if (peliculaSeleccionada && sucursalSeleccionada && salaSeleccionada) {
+            console.log("Sala seleccionada:", salaSeleccionada);
+            const obtenerFechasDisponibles = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/function/obtenerFechasDisponibles/${peliculaSeleccionada}/${sucursalSeleccionada}/${salaSeleccionada}`);
+                    const fechasCargadas = await response.json();
+                    setFechas(Array.isArray(fechasCargadas) ? fechasCargadas : []);
+                } catch (error) {
+                    console.error('Error al obtener las fechas disponibles:', error);
+                    setFechas([]);
+                }
+            };
+            obtenerFechasDisponibles();
+        }
+    }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada]);
+
     return (
         <Layout>
             <div className="flex h-full">
@@ -217,7 +236,7 @@ const ReservaAsientos = () => {
                                     setPeliculaSeleccionada(e.target.value);
                                     setSucursalSeleccionada('');
                                     setSalaSeleccionada(''); 
-                                    setFecha(''); 
+                                    setFechaSeleccionada(''); 
                                     setHora('');
                                     setFormato(''); 
                                     setSubtitulada('');
@@ -244,7 +263,7 @@ const ReservaAsientos = () => {
                                 onChange={(e) => {
                                     setSucursalSeleccionada(e.target.value)
                                     setSalaSeleccionada(''); 
-                                    setFecha(''); 
+                                    setFechaSeleccionada(''); 
                                     setHora('');
                                     setFormato(''); 
                                     setSubtitulada('');
@@ -269,7 +288,7 @@ const ReservaAsientos = () => {
                             <select 
                                 onChange={(e) => { 
                                     setSalaSeleccionada(e.target.value);
-                                    setFecha(''); 
+                                    setFechaSeleccionada(''); 
                                     setHora('');
                                     setFormato(''); 
                                     setSubtitulada('');
@@ -293,13 +312,13 @@ const ReservaAsientos = () => {
                             <label className="block mb-1">Fecha:</label>
                             <select 
                                 onChange={(e) => { 
-                                    setFecha(e.target.value); 
+                                    setFechaSeleccionada(e.target.value); 
                                     setHora('');
                                     setFormato(''); 
                                     setSubtitulada('');
                                     setAsientosSeleccionados([]);  
                                 }} 
-                                value={fecha} 
+                                value={fechaSeleccionada} 
                                 disabled={!salaSeleccionada}
                                 className="w-full p-2 border rounded"
                             >
@@ -321,7 +340,7 @@ const ReservaAsientos = () => {
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={hora} 
-                                disabled={!fecha}
+                                disabled={!fechas}
                                 className="w-full p-2 border rounded"
                             >
                                 <option value="">Seleccionar Hora</option>
