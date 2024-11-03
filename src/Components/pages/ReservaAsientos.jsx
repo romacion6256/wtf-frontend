@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from './Layout';
+import '../../index.css';
 //import { Link } from 'react-router-dom';
 
 //import MisReservas from './MisReservas';
@@ -37,12 +38,15 @@ const ReservaAsientos = () => {
 
     const [subtitulada, setSubtitulada] = useState([]);
     const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState('');
-  
+
+    const [cargandoAsientos, setCargandoAsientos] = useState(false);
+
     //const [titulo, setTitulo] = useState('');
     //const [sucursal, setSucursal] = useState('');
     //const [fecha, setFecha] = useState('');
     //const [hora, setHora] = useState('');
-    
+
+    const [asientosReservados, setAsientosReservados] = useState([]);
     const [asientosSeleccionados, setAsientosSeleccionados] = useState([]);
     const [mostrarPopupSnacks, setMostrarPopupSnacks] = useState(false);
     const [mostrarConfirmacionCompra, setMostrarConfirmacionCompra] = useState(false);
@@ -250,6 +254,56 @@ const ReservaAsientos = () => {
             }
         }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada, fechaSeleccionada, horaSeleccionada, formatoSeleccionado ]);
 
+        const obtenerAsientosReservados = useCallback(async () => {
+            setCargandoAsientos(true); 
+            try {
+                const subtitledValue = subtituladaSeleccionada === 'Si';
+                const params = new URLSearchParams({
+                    movieName: peliculaSeleccionada,
+                    branchName: sucursalSeleccionada,
+                    roomNumber: salaSeleccionada,
+                    date: fechaSeleccionada,
+                    time: horaSeleccionada,
+                    format: formatoSeleccionado,
+                    subtitled: subtitledValue,
+                }).toString();
+    
+                const response = await fetch(`http://localhost:8080/api/reservation/asientosReservados?${params}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+    
+                const data = await response.json();
+                setAsientosReservados(data);
+            } catch (error) {
+                console.error('Error al obtener los asientos reservados:', error);
+            } finally {
+                setCargandoAsientos(false); 
+            }
+        }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada, fechaSeleccionada, horaSeleccionada, formatoSeleccionado, subtituladaSeleccionada]);
+    
+        useEffect(() => {
+            if (peliculaSeleccionada && sucursalSeleccionada && salaSeleccionada && fechaSeleccionada && horaSeleccionada && formatoSeleccionado && subtituladaSeleccionada) {
+                obtenerAsientosReservados();
+            }
+        }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada, fechaSeleccionada, horaSeleccionada, formatoSeleccionado, subtituladaSeleccionada,obtenerAsientosReservados]);
+    
+        const marcarAsientosReservados = useCallback((asientosReservados) => {
+            asientosReservados.forEach(asiento => {
+                const { row, column } = asiento;
+                asientos[row][column] = true; // Mark seat as reserved
+            });
+        }, [asientos]);
+    
+        useEffect(() => {
+            if (asientosReservados.length > 0) {
+                marcarAsientosReservados(asientosReservados);
+            }
+        }, [asientosReservados, marcarAsientosReservados]);
+
+
     return (
         <Layout>
             <div className="flex h-full">
@@ -448,34 +502,44 @@ const ReservaAsientos = () => {
                         </div>
                     </div>
 
-                    {/* Contenedor para la matriz de asientos */}
-                    <div className="flex flex-col items-center">
-                        {puedeSeleccionarAsientos && (
-                            <div className="grid grid-cols-1 gap-1">
-                                <div className="flex justify-center mb-2">
-                                    <span className="text-center font-bold">Pantalla</span>
-                                </div>
-                                {asientos.map((fila, rowIndex) => (
-                                    <div key={rowIndex} className="flex items-center justify-center space-x-1">
-                                        <span className="w-10 text-center">{rowIndex+1}</span>
-                                        {fila.map((asiento, colIndex) => {
-                                            const asientoId = `${rowIndex}-${colIndex}`;
-                                            const isSeleccionado = asientosSeleccionados.includes(asientoId);
-                                            return (
-                                                <div
-                                                    key={colIndex}
-                                                    onClick={() => toggleAsiento(rowIndex, colIndex)}
-                                                    className={`w-6 h-6 rounded-full cursor-pointer ${isSeleccionado ? 'bg-blue-500' : 'bg-green-500'}`}
-                                                    style={{ border: isSeleccionado ? '2px solid blue' : '2px solid transparent' }}
-                                                >
-                                                    {isSeleccionado && <span className="text-white text-xs"></span>}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                ))}
+                    <div>
+            {/* Contenedor para la matriz de asientos */}
+            <div className="flex flex-col items-center">
+                {cargandoAsientos ? ( // Mostrar loader si está cargando
+                    <div className="flex justify-center items-center" style={{ height: "200px" }}>
+                        <div className="loader" /> {/* Círculo de carga */}
+                    </div>
+                ) : (
+                    puedeSeleccionarAsientos && ( // Solo renderiza la matriz si puede seleccionar asientos
+                        <div className="grid grid-cols-1 gap-1">
+                            <div className="flex justify-center mb-2">
+                                <span className="text-center font-bold">Pantalla</span>
                             </div>
-                        )}
+                            {asientos.map((fila, rowIndex) => (
+                                <div key={rowIndex} className="flex items-center justify-center space-x-1">
+                                    <span className="w-10 text-center">{rowIndex + 1}</span>
+                                    {fila.map((asiento, colIndex) => {
+                                        const asientoId = `${rowIndex}-${colIndex}`;
+                                        const isReservado = asientosReservados.some(reservado => reservado.row === rowIndex + 1 && reservado.column === colIndex + 1);
+                                        const isSeleccionado = asientosSeleccionados.includes(asientoId);
+                                        return (
+                                            <div
+                                                key={colIndex}
+                                                onClick={() => !isReservado && toggleAsiento(rowIndex, colIndex)} // Solo se puede seleccionar si no está reservado
+                                                className={`w-6 h-6 rounded-full cursor-pointer ${isReservado ? 'bg-red-500' : isSeleccionado ? 'bg-blue-500' : 'bg-green-500'}`}
+                                                style={{ border: isSeleccionado ? '2px solid blue' : '2px solid transparent' }}
+                                            >
+                                                {isSeleccionado && <span className="text-white text-xs"></span>}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ))}
+                        </div>
+                    )
+                )}
+            </div>
+        
 
                         {/* Leyenda de colores */}
                         <div className="mt-4">
