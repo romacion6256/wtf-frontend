@@ -535,7 +535,7 @@ const ReservaAsientos = () => {
                         </div>
                     </div>
                     <div className="flex space-x-4 mb-4">
-                    <div className="flex-1/3">
+                        <div className="flex-1/3">
                             <label className="block mb-1">Subtitulada:</label>
                             <select 
                                 onChange={(e) => { 
@@ -592,7 +592,7 @@ const ReservaAsientos = () => {
                 )}
             </div>
             {/* Leyenda de colores */}
-            <div className="mt-4">
+            <div className="mt-4 flex justify-center">
                 <div className="flex space-x-2">
                     <div className="flex items-center">
                         <div className="w-4 h-4 bg-green-500 rounded-3xl"></div>
