@@ -11,7 +11,7 @@ import Layout from './Layout';
 //const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
 //const horarios = ['19:00', '21:30', '18:00'];
 //const formatos = ['2D Sub', '3D Esp']
-const sub = ["Si", "No"]
+//const sub = ["Si", "No"]
 const precioAsiento = 100;
 const snacks = [
     { id: 1, nombre: 'Popcorn', precio: 50},
@@ -35,8 +35,8 @@ const ReservaAsientos = () => {
     const [formatoSeleccionado, setFormatoSeleccionado] = useState('');
     const [formatos, setFormatos] = useState([]);
 
-    const [subtitulada, setSubtitulada] = useState('');
-    const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState([]);
+    const [subtitulada, setSubtitulada] = useState([]);
+    const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState('');
   
     //const [titulo, setTitulo] = useState('');
     //const [sucursal, setSucursal] = useState('');
@@ -87,11 +87,11 @@ const ReservaAsientos = () => {
         setAsientosSeleccionados(nuevoEstado);
     };
 
-    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fechas && horarios && formatos && subtitulada;
+    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fechaSeleccionada && horaSeleccionada && formatoSeleccionado && subtituladaSeleccionada;
     const totalAsientosSeleccionados = asientosSeleccionados.length;
     const totalPrecio = totalAsientosSeleccionados * precioAsiento;
 
-    const mostrarPopup = sucursalSeleccionada && fechas && horarios && formatos && subtitulada && asientosSeleccionados.length > 0;
+    const mostrarPopup = sucursalSeleccionada && fechaSeleccionada && horaSeleccionada && formatoSeleccionado && subtituladaSeleccionada && asientosSeleccionados.length > 0;
 
     const aumentarCantidad = (id) => {
         setCantidadSnacks((prev) => ({
@@ -232,6 +232,24 @@ const ReservaAsientos = () => {
             }
         }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada, fechaSeleccionada, horaSeleccionada ]);
 
+        // OBTENER SUBTITULADA
+        useEffect(() => {
+            if (peliculaSeleccionada && sucursalSeleccionada && salaSeleccionada && fechaSeleccionada && horaSeleccionada && formatoSeleccionado) {
+                console.log("Formato seleccionado:", formatoSeleccionado);
+                const obtenerSubtitulosDisponibles = async () => {
+                    try {
+                        const response = await fetch(`http://localhost:8080/api/function/obtenerSubtitulosDisponibles/${peliculaSeleccionada}/${sucursalSeleccionada}/${salaSeleccionada}/${fechaSeleccionada}/${horaSeleccionada}/${formatoSeleccionado}`);
+                        const subsCargadas = await response.json();
+                        setSubtitulada(Array.isArray(subsCargadas) ? subsCargadas : []);
+                    } catch (error) {
+                        console.error('Error al obtener los subtitulos disponibles:', error);
+                        setSubtitulada([]);
+                    }
+                };
+                obtenerSubtitulosDisponibles();
+            }
+        }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada, fechaSeleccionada, horaSeleccionada, formatoSeleccionado ]);
+
     return (
         <Layout>
             <div className="flex h-full">
@@ -280,7 +298,7 @@ const ReservaAsientos = () => {
                                     setFechaSeleccionada(''); 
                                     setHoraSeleccionada('');
                                     setFormatoSeleccionado(''); 
-                                    setSubtitulada('');
+                                    setSubtituladaSeleccionada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={peliculaSeleccionada}
@@ -307,7 +325,7 @@ const ReservaAsientos = () => {
                                     setFechaSeleccionada(''); 
                                     setHoraSeleccionada('');
                                     setFormatoSeleccionado(''); 
-                                    setSubtitulada('');
+                                    setSubtituladaSeleccionada('');
                                     setAsientosSeleccionados([]); 
                                 }}
                                 value={sucursalSeleccionada}
@@ -332,7 +350,7 @@ const ReservaAsientos = () => {
                                     setFechaSeleccionada(''); 
                                     setHoraSeleccionada('');
                                     setFormatoSeleccionado(''); 
-                                    setSubtitulada('');
+                                    setSubtituladaSeleccionada('');
                                     setAsientosSeleccionados([]);  
                                 }} 
                                 value={salaSeleccionada} 
@@ -356,7 +374,7 @@ const ReservaAsientos = () => {
                                     setFechaSeleccionada(e.target.value); 
                                     setHoraSeleccionada('');
                                     setFormatoSeleccionado(''); 
-                                    setSubtitulada('');
+                                    setSubtituladaSeleccionada('');
                                     setAsientosSeleccionados([]);  
                                 }} 
                                 value={fechaSeleccionada} 
@@ -377,7 +395,7 @@ const ReservaAsientos = () => {
                                 onChange={(e) => { 
                                     setHoraSeleccionada(e.target.value); 
                                     setFormatoSeleccionado(''); 
-                                    setSubtitulada('');
+                                    setSubtituladaSeleccionada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={horaSeleccionada} 
@@ -396,7 +414,7 @@ const ReservaAsientos = () => {
                             <select 
                                 onChange={(e) => { 
                                     setFormatoSeleccionado(e.target.value); 
-                                    setSubtitulada('');
+                                    setSubtituladaSeleccionada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={formatoSeleccionado} 
@@ -415,15 +433,15 @@ const ReservaAsientos = () => {
                             <label className="block mb-1">Subtitulada:</label>
                             <select 
                                 onChange={(e) => { 
-                                    setSubtitulada(e.target.value); 
+                                    setSubtituladaSeleccionada(e.target.value); 
                                     setAsientosSeleccionados([]); 
                                 }} 
-                                value={subtitulada} 
+                                value={subtituladaSeleccionada} 
                                 disabled={!formatoSeleccionado}
                                 className="w-full p-2 border rounded"
                             >
                                 <option value="">Seleccionar Opcion</option>
-                                {sub.map((subt, index) => (
+                                {subtitulada.map((subt, index) => (
                                     <option key={index} value={subt}>{subt}</option>
                                 ))}
                             </select>
