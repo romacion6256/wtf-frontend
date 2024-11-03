@@ -9,8 +9,8 @@ import Layout from './Layout';
 
 //const sucursales = ['Punta Carretas', 'Ciudad Vieja', 'Pocitos','Carrasco','Tres Cruces','Centro','Malvin','Buceo'];
 //const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
-const horarios = ['19:00', '21:30', '18:00'];
-const formatos = ['2D Sub', '3D Esp']
+//const horarios = ['19:00', '21:30', '18:00'];
+//const formatos = ['2D Sub', '3D Esp']
 const sub = ["Si", "No"]
 const precioAsiento = 100;
 const snacks = [
@@ -30,14 +30,19 @@ const ReservaAsientos = () => {
     const [salaSeleccionada, setSalaSeleccionada] = useState('');
     const [fechas, setFechas] = useState([]);
     const [fechaSeleccionada, setFechaSeleccionada] = useState('');
+    const [horarios, setHorarios] = useState([]);
+    const [horaSeleccionada , setHoraSeleccionada] = useState('');
+    const [formatoSeleccionado, setFormatoSeleccionado] = useState('');
+    const [formatos, setFormatos] = useState([]);
+
     const [subtitulada, setSubtitulada] = useState('');
     const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState([]);
   
     //const [titulo, setTitulo] = useState('');
     //const [sucursal, setSucursal] = useState('');
     //const [fecha, setFecha] = useState('');
-    const [hora, setHora] = useState('');
-    const [formato, setFormato] = useState('');
+    //const [hora, setHora] = useState('');
+    
     const [asientosSeleccionados, setAsientosSeleccionados] = useState([]);
     const [mostrarPopupSnacks, setMostrarPopupSnacks] = useState(false);
     const [mostrarConfirmacionCompra, setMostrarConfirmacionCompra] = useState(false);
@@ -82,11 +87,11 @@ const ReservaAsientos = () => {
         setAsientosSeleccionados(nuevoEstado);
     };
 
-    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fechas && hora && formato && subtitulada;
+    const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fechas && horarios && formatos && subtitulada;
     const totalAsientosSeleccionados = asientosSeleccionados.length;
     const totalPrecio = totalAsientosSeleccionados * precioAsiento;
 
-    const mostrarPopup = sucursalSeleccionada && fechas && hora && formato && subtitulada && asientosSeleccionados.length > 0;
+    const mostrarPopup = sucursalSeleccionada && fechas && horarios && formatos && subtitulada && asientosSeleccionados.length > 0;
 
     const aumentarCantidad = (id) => {
         setCantidadSnacks((prev) => ({
@@ -191,6 +196,42 @@ const ReservaAsientos = () => {
         }
     }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada]);
 
+    // OBTENER HORARIOS
+    useEffect(() => {
+        if (peliculaSeleccionada && sucursalSeleccionada && salaSeleccionada && fechaSeleccionada) {
+            console.log("Fecha seleccionada:", fechaSeleccionada);
+            const obtenerHorariosDisponibles = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/function/obtenerHorasDisponibles/${peliculaSeleccionada}/${sucursalSeleccionada}/${salaSeleccionada}/${fechaSeleccionada}`);
+                    const horariosCargadas = await response.json();
+                    setHorarios(Array.isArray(horariosCargadas) ? horariosCargadas : []);
+                } catch (error) {
+                    console.error('Error al obtener los horarios disponibles:', error);
+                    setHorarios([]);
+                }
+            };
+            obtenerHorariosDisponibles();
+        }
+    }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada,fechaSeleccionada ]);
+
+        // OBTENER FORMATOS
+        useEffect(() => {
+            if (peliculaSeleccionada && sucursalSeleccionada && salaSeleccionada && fechaSeleccionada && horaSeleccionada) {
+                console.log("Hora seleccionada:", horaSeleccionada);
+                const obtenerFormatosDisponibles = async () => {
+                    try {
+                        const response = await fetch(`http://localhost:8080/api/function/obtenerFormatosDisponibles/${peliculaSeleccionada}/${sucursalSeleccionada}/${salaSeleccionada}/${fechaSeleccionada}/${horaSeleccionada}`);
+                        const formatosCargadas = await response.json();
+                        setFormatos(Array.isArray(formatosCargadas) ? formatosCargadas : []);
+                    } catch (error) {
+                        console.error('Error al obtener los formatos disponibles:', error);
+                        setFormatos([]);
+                    }
+                };
+                obtenerFormatosDisponibles();
+            }
+        }, [peliculaSeleccionada, sucursalSeleccionada, salaSeleccionada, fechaSeleccionada, horaSeleccionada ]);
+
     return (
         <Layout>
             <div className="flex h-full">
@@ -237,8 +278,8 @@ const ReservaAsientos = () => {
                                     setSucursalSeleccionada('');
                                     setSalaSeleccionada(''); 
                                     setFechaSeleccionada(''); 
-                                    setHora('');
-                                    setFormato(''); 
+                                    setHoraSeleccionada('');
+                                    setFormatoSeleccionado(''); 
                                     setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
@@ -264,8 +305,8 @@ const ReservaAsientos = () => {
                                     setSucursalSeleccionada(e.target.value)
                                     setSalaSeleccionada(''); 
                                     setFechaSeleccionada(''); 
-                                    setHora('');
-                                    setFormato(''); 
+                                    setHoraSeleccionada('');
+                                    setFormatoSeleccionado(''); 
                                     setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }}
@@ -289,8 +330,8 @@ const ReservaAsientos = () => {
                                 onChange={(e) => { 
                                     setSalaSeleccionada(e.target.value);
                                     setFechaSeleccionada(''); 
-                                    setHora('');
-                                    setFormato(''); 
+                                    setHoraSeleccionada('');
+                                    setFormatoSeleccionado(''); 
                                     setSubtitulada('');
                                     setAsientosSeleccionados([]);  
                                 }} 
@@ -313,8 +354,8 @@ const ReservaAsientos = () => {
                             <select 
                                 onChange={(e) => { 
                                     setFechaSeleccionada(e.target.value); 
-                                    setHora('');
-                                    setFormato(''); 
+                                    setHoraSeleccionada('');
+                                    setFormatoSeleccionado(''); 
                                     setSubtitulada('');
                                     setAsientosSeleccionados([]);  
                                 }} 
@@ -334,13 +375,13 @@ const ReservaAsientos = () => {
                             <label className="block mb-1">Hora:</label>
                             <select 
                                 onChange={(e) => { 
-                                    setHora(e.target.value); 
-                                    setFormato(''); 
+                                    setHoraSeleccionada(e.target.value); 
+                                    setFormatoSeleccionado(''); 
                                     setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
-                                value={hora} 
-                                disabled={!fechas}
+                                value={horaSeleccionada} 
+                                disabled={!fechaSeleccionada}
                                 className="w-full p-2 border rounded"
                             >
                                 <option value="">Seleccionar Hora</option>
@@ -354,12 +395,12 @@ const ReservaAsientos = () => {
                             <label className="block mb-1">Formato:</label>
                             <select 
                                 onChange={(e) => { 
-                                    setFormato(e.target.value); 
+                                    setFormatoSeleccionado(e.target.value); 
                                     setSubtitulada('');
                                     setAsientosSeleccionados([]); 
                                 }} 
-                                value={formato} 
-                                disabled={!hora}
+                                value={formatoSeleccionado} 
+                                disabled={!horaSeleccionada}
                                 className="w-full p-2 border rounded"
                             >
                                 <option value="">Seleccionar Formato</option>
@@ -378,7 +419,7 @@ const ReservaAsientos = () => {
                                     setAsientosSeleccionados([]); 
                                 }} 
                                 value={subtitulada} 
-                                disabled={!formato}
+                                disabled={!formatoSeleccionado}
                                 className="w-full p-2 border rounded"
                             >
                                 <option value="">Seleccionar Opcion</option>
