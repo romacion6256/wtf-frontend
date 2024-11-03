@@ -1,25 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Layout from './Layout';
 import '../../index.css';
-//import { Link } from 'react-router-dom';
 
-//import MisReservas from './MisReservas';
-
-// Datos de ejemplo para títulos
-//const titulos = ['Película 1', 'Película 2', 'Película 3'];
-
-//const sucursales = ['Punta Carretas', 'Ciudad Vieja', 'Pocitos','Carrasco','Tres Cruces','Centro','Malvin','Buceo'];
-//const fechas = ['2024-10-10', '2024-10-12', '2024-10-15'];
-//const horarios = ['19:00', '21:30', '18:00'];
-//const formatos = ['2D Sub', '3D Esp']
-//const sub = ["Si", "No"]
 const precioAsiento = 100;
-const snacks = [
-    { id: 1, nombre: 'Popcorn', precio: 50},
-    { id: 2, nombre: 'Soda', precio: 30 },
-    { id: 3, nombre: 'Candy', precio: 40},
-    { id: 4, nombre: 'Nachos', precio: 60},
-];
 
 
 const ReservaAsientos = () => {
@@ -38,7 +21,8 @@ const ReservaAsientos = () => {
 
     const [subtitulada, setSubtitulada] = useState([]);
     const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState('');
-
+    const [snacks, setSnacks] = useState([]);
+    const [cargandoSnacks, setCargandoSnacks] = useState(true); 
     const [cargandoAsientos, setCargandoAsientos] = useState(false);
 
     //const [titulo, setTitulo] = useState('');
@@ -52,6 +36,9 @@ const ReservaAsientos = () => {
     const [mostrarConfirmacionCompra, setMostrarConfirmacionCompra] = useState(false);
     const [mostrarResumenPago, setMostrarResumenPago] = useState(false);
     const [cantidadSnacks, setCantidadSnacks] = useState({});
+
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
     
     const totalFilas = 15;
     const totalColumnas = 10;
@@ -111,7 +98,7 @@ const ReservaAsientos = () => {
     };
 
     const totalPrecioSnacks = snacks.reduce((acc, snack) => {
-        return acc + (cantidadSnacks[snack.id] || 0) * snack.precio;
+        return acc + (cantidadSnacks[snack.snackId] || 0) * snack.price;
     }, 0);
 
     const reservarAsientos = () => {
@@ -123,10 +110,10 @@ const ReservaAsientos = () => {
     //     setMostrarPopupSnacks(false);
     //     setMostrarConfirmacionCompra(true);
     // };
-    const finalizarCompra = () => {
-        setMostrarResumenPago(false);
-        setMostrarConfirmacionCompra(true);
-    };
+    // const finalizarCompra = () => {
+    //     setMostrarResumenPago(false);
+    //     setMostrarConfirmacionCompra(true);
+    // };
     const abrirResumenPago = () => {
         setMostrarPopupSnacks(false);
         setMostrarResumenPago(true);
@@ -303,6 +290,71 @@ const ReservaAsientos = () => {
             }
         }, [asientosReservados, marcarAsientosReservados]);
 
+
+        useEffect(() => {
+            const obtenerSnacks = async () => {
+                setCargandoSnacks(true); 
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/snack/listarSnacks');
+                    const snacksCargadas = await response.json();
+                    setSnacks(snacksCargadas);
+                } catch (error) {
+                    console.error('Error al obtener los snacks:', error);
+                } finally {
+                    setCargandoSnacks(false); // Termina el cargador
+                }
+            };
+            obtenerSnacks();
+        }, []);
+
+        const confirmarPago = async () => {
+            // const cardData = JSON.parse(localStorage.getItem("card"));
+            // const clientId = JSON.parse(localStorage.getItem("id")); 
+            // if (!cardData) {
+            //     // Si no hay tarjeta, mostrar alerta
+            //     setAlertMessage('Debes ingresar un método de pago.');
+            //     setAlertType('Atencion');
+            //     return;
+            // }
+        
+            // const selectedSeats = asientosSeleccionados.join(","); // Unir los asientos seleccionados en una cadena
+            // const snacksIds = Object.keys(cantidadSnacks).filter(snackId => cantidadSnacks[snackId] > 0).join(","); // Filtrar snacks seleccionados
+        
+            // const reservationData = {
+            //     paymentMethod: 'tarjeta', 
+            //     rowSeat: parseInt(selectedSeats.split('-')[0]) + 1, // Ejemplo para obtener la fila del primer asiento
+            //     columnSeat: parseInt(selectedSeats.split('-')[1]) + 1, // Ejemplo para obtener la columna del primer asiento
+            //     idFunction: idFunction, // <-- hay que OBTENERLO
+            //     idClient: clientId
+            // };
+        
+            // try {
+            //     const response = await fetch(`http://localhost:8080/api/reserva/crearReserva/${clientId}`, {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify(reservationData),
+            //     });
+        
+            //     if (response.ok) {
+            //         const result = await response.json();
+            //         setAlertMessage(result); 
+            //         setAlertType('Completado');
+            //         setMostrarResumenPago(false);
+            //         setMostrarConfirmacionCompra(true);
+            //     } else {
+            //         const errorMessage = await response.text();
+            //         setAlertMessage(`Error: ${errorMessage}`);
+            //         setAlertType('Error');
+            //     }
+            // } catch (error) {
+            //     console.error('Error en la creación de reserva:', error);
+            //     setAlertMessage('Error al crear la reserva. Inténtalo de nuevo.');
+            //     setAlertType('Error');
+            // }
+        };
 
     return (
         <Layout>
@@ -539,58 +591,66 @@ const ReservaAsientos = () => {
                     )
                 )}
             </div>
-        
-
-                        {/* Leyenda de colores */}
-                        <div className="mt-4">
-                            <div className="flex space-x-2">
-                                <div className="flex items-center">
-                                    <div className="w-4 h-4 bg-green-500 rounded-3xl"></div>
-                                    <span className="ml-1">Disponible</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <div className="w-4 h-4 bg-red-500 rounded-3xl"></div>
-                                    <span className="ml-1">Reservado</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <div className="w-4 h-4 bg-blue-500 rounded-3xl"></div>
-                                    <span className="ml-1">Seleccionado</span>
-                                </div>
-                            </div>
-                        </div>
+            {/* Leyenda de colores */}
+            <div className="mt-4">
+                <div className="flex space-x-2">
+                    <div className="flex items-center">
+                        <div className="w-4 h-4 bg-green-500 rounded-3xl"></div>
+                        <span className="ml-1">Disponible</span>
+                    </div>
+                    <div className="flex items-center">
+                        <div className="w-4 h-4 bg-red-500 rounded-3xl"></div>
+                        <span className="ml-1">Reservado</span>
+                    </div>
+                    <div className="flex items-center">
+                        <div className="w-4 h-4 bg-blue-500 rounded-3xl"></div>
+                        <span className="ml-1">Seleccionado</span>
+                    </div>
+                </div>
+            </div>
             
                     </div>
                 </div>
             {/* Pop-up para agregar snacks */}
             {mostrarPopupSnacks && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                        <div className="bg-white p-4 rounded-md w-96">
-                            <h2 className="text-lg font-bold mb-4">Selecciona tus Snacks</h2>
-                            {snacks.map((snack) => (
-                                <div key={snack.id} className="flex items-center justify-between mb-2">
-                                    {/* <img src={snack.imagen} alt={snack.nombre} className="w-10 h-10 mr-2" /> */}
-                                    <span>{snack.nombre} - ${snack.precio}</span>
-                                    <div className="flex items-center">
-                                        <button
-                                            className="px-2 py-1 bg-gray-200 rounded"
-                                            onClick={() => disminuirCantidad(snack.id)}
-                                        >-</button>
-                                        <span className="mx-2">{cantidadSnacks[snack.id] || 0}</span>
-                                        <button
-                                            className="px-2 py-1 bg-gray-200 rounded"
-                                            onClick={() => aumentarCantidad(snack.id)}
-                                        >+</button>
-                                    </div>
-                                </div>
-                            ))}
-                            <div className="mt-4">
-                                <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={abrirResumenPago}>
-                                    Confirmar Snacks (${totalPrecioSnacks})
-                                </button>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-4 rounded-md w-96">
+                        <h2 className="text-lg font-bold mb-4">Selecciona tus Snacks</h2>
+                        {cargandoSnacks ? (
+                            <div className="flex justify-center items-center" style={{ height: "100px" }}>
+                                <div className="loader" /> {/* Círculo de carga */}
                             </div>
+                        ) : snacks.length > 0 ? (
+                            <ul>
+                                {snacks.map((snack) => (
+                                    <div key={snack.snackId} className="flex items-center justify-between mb-2">
+                                        {/* <img src={snack.imagen} alt={snack.nombre} className="w-10 h-10 mr-2" /> */}
+                                        <span>{snack.description} - ${snack.price}</span>
+                                        <div className="flex items-center">
+                                            <button
+                                                className="px-2 py-1 bg-gray-200 rounded"
+                                                onClick={() => disminuirCantidad(snack.snackId)}
+                                            >-</button>
+                                            <span className="mx-2">{cantidadSnacks[snack.snackId] || 0}</span>
+                                            <button
+                                                className="px-2 py-1 bg-gray-200 rounded"
+                                                onClick={() => aumentarCantidad(snack.snackId)}
+                                            >+</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No hay Snacks disponibles</p>
+                        )}
+                        <div className="mt-4">
+                            <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={abrirResumenPago}>
+                                Confirmar Snacks (${totalPrecioSnacks})
+                            </button>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
 
                 {/* Pop-up de resumen de pago */}
             {mostrarResumenPago && (
@@ -601,7 +661,9 @@ const ReservaAsientos = () => {
                             <h3 className="font-bold">Asientos Seleccionados:</h3>
                             <ul>
                                 {formatearAsientosSeleccionados().map((asiento, index) => (
-                                    <li key={index}>{asiento}</li>
+                                    <li key={index}>
+                                        {asiento} - $ {precioAsiento}
+                                    </li>
                                 ))}
                             </ul>
                         </div>
@@ -609,10 +671,10 @@ const ReservaAsientos = () => {
                             <h3 className="font-bold">Snacks Seleccionados:</h3>
                             <ul>
                                 {snacks
-                                    .filter(snack => cantidadSnacks[snack.id] > 0)
+                                    .filter(snack => cantidadSnacks[snack.snackId] > 0)
                                     .map(snack => (
-                                        <li key={snack.id}>
-                                            {snack.nombre} x {cantidadSnacks[snack.id]} - ${snack.precio * cantidadSnacks[snack.id]}
+                                        <li key={snack.snackId}>
+                                            {snack.description} x {cantidadSnacks[snack.snackId]} - ${snack.price * cantidadSnacks[snack.snackId]}
                                         </li>
                                     ))}
                             </ul>
@@ -625,10 +687,7 @@ const ReservaAsientos = () => {
                             >
                                 Cancelar
                             </button>
-                            <button
-                                className="bg-blue-500 text-white px-4 py-2"
-                                onClick={finalizarCompra}
-                            >
+                            <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={confirmarPago}>
                                 Confirmar Pago
                             </button>
                         </div>
