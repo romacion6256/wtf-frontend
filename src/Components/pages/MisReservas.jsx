@@ -23,7 +23,12 @@ const MisReservas = () => {
                 const userId = JSON.parse(localStorage.getItem("user")).id;
                 const response = await fetch(`http://localhost:8080/api/reservation/misReservas/${userId}`);
                 const reservasCargadas = await response.json();
-                setReservas(reservasCargadas);
+                await fetch(`http://localhost:8080/api/reservation/actualizarReservas`, {
+                    method: 'GET',
+                });
+                console.log(reservasCargadas)
+                const reservasPendientes = reservasCargadas.filter(reservas => reservas.status === 'Pendiente');
+                setReservas(reservasPendientes);
             } catch (error) {
                 console.error('Error al obtener las reservas:', error);
             } finally {
