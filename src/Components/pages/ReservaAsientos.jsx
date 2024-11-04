@@ -19,6 +19,8 @@ const ReservaAsientos = () => {
     const [formatoSeleccionado, setFormatoSeleccionado] = useState('');
     const [formatos, setFormatos] = useState([]);
 
+    const [loading, setLoading] = useState(false);
+
     const [subtitulada, setSubtitulada] = useState([]);
     const [subtituladaSeleccionada, setSubtituladaSeleccionada] = useState('');
     const [snacks, setSnacks] = useState([]);
@@ -309,51 +311,116 @@ const ReservaAsientos = () => {
         }, []);
 
         const confirmarPago = async () => {
-            // const cardData = JSON.parse(localStorage.getItem("card"));
-            // const clientId = JSON.parse(localStorage.getItem("id")); 
-            // if (!cardData) {
-            //     // Si no hay tarjeta, mostrar alerta
-            //     setAlertMessage('Debes ingresar un método de pago.');
-            //     setAlertType('Atencion');
-            //     return;
-            // }
+            setLoading(true);
+            console.log("Inicio de confirmarPago");
+            const cardData = JSON.parse(localStorage.getItem("user")).card.cardNumber;
+            
+            console.log("Tarjeta", cardData);
+
+
+            if (!cardData) {
+                // Si no hay tarjeta, mostrar alerta
+                console.log("No hay tarjeta");
+                setAlertMessage('Debes ingresar un método de pago.');
+                setAlertType('Atencion');
+                return;
+            }
+            
+            const clientId = JSON.parse(localStorage.getItem("user")).id;
+            console.log("Client Id", clientId);
+
+            // Obtener los IDs de la función usando los parámetros necesarios
+            const selectedSeats = asientosSeleccionados.map(seat => {
+                const [row, column] = seat.split('-').map(Number);
+                return { rowSeat: row + 1, columnSeat: column + 1 }; // Ajustamos para que sea 1-based
+            });
+            console.log("Asientos seleccionados:", selectedSeats);
+
+            const snacksIds = Object.keys(cantidadSnacks)
+            .filter(snackId => cantidadSnacks[snackId] > 0)
+            .join(","); // Filtrar snacks seleccionados
+
+            console.log("Snacks seleccionados:", snacksIds);
+
+            // Lógica para obtener el ID de la función
+            const functionParams = new URLSearchParams({
+                movieName: peliculaSeleccionada, 
+                branchName: sucursalSeleccionada, 
+                roomNumber: salaSeleccionada, 
+                date: fechaSeleccionada, 
+                time: horaSeleccionada, 
+                format: formatoSeleccionado, 
+                subtitled: subtituladaSeleccionada, 
+            });
+
+            let functionId;
+            try {
+                const response = await fetch(`http://localhost:8080/api/function/obtenerIdFuncion?${functionParams.toString()}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    
+                });
+
+                console.log("Respuesta de obtenerIdFuncion:", response);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    functionId = result; // Guardamos el ID de la función
+                    console.log("ID de función obtenido:", functionId);
+                } else {
+                    const errorMessage = await response.text();
+                    setAlertMessage(`Error al obtener ID de la función: ${errorMessage}`);
+                    setAlertType('Error');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error al obtener ID de la función:', error);
+                setAlertMessage('Error al obtener ID de la función. Inténtalo de nuevo.');
+                setAlertType('Error');
+                return;
+            }
+
+            const reservationData = {
+                paymentMethod: 'tarjeta', 
+                seats: selectedSeats,
+                // rowSeat: parseInt(selectedSeats.split('-')[0]) + 1, // Ejemplo para obtener la fila del primer asiento
+                // columnSeat: parseInt(selectedSeats.split('-')[1]) + 1, // Ejemplo para obtener la columna del primer asiento
+                idFunction: functionId, // <-- hay que OBTENERLO
+                idClient: clientId,
+                snackIds: snacksIds 
+            };
+            
+            console.log("Datos de reserva a enviar:", reservationData); 
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/reservation/crearReserva/${clientId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(reservationData),
+                });
         
-            // const selectedSeats = asientosSeleccionados.join(","); // Unir los asientos seleccionados en una cadena
-            // const snacksIds = Object.keys(cantidadSnacks).filter(snackId => cantidadSnacks[snackId] > 0).join(","); // Filtrar snacks seleccionados
-        
-            // const reservationData = {
-            //     paymentMethod: 'tarjeta', 
-            //     rowSeat: parseInt(selectedSeats.split('-')[0]) + 1, // Ejemplo para obtener la fila del primer asiento
-            //     columnSeat: parseInt(selectedSeats.split('-')[1]) + 1, // Ejemplo para obtener la columna del primer asiento
-            //     idFunction: idFunction, // <-- hay que OBTENERLO
-            //     idClient: clientId
-            // };
-        
-            // try {
-            //     const response = await fetch(`http://localhost:8080/api/reserva/crearReserva/${clientId}`, {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify(reservationData),
-            //     });
-        
-            //     if (response.ok) {
-            //         const result = await response.json();
-            //         setAlertMessage(result); 
-            //         setAlertType('Completado');
-            //         setMostrarResumenPago(false);
-            //         setMostrarConfirmacionCompra(true);
-            //     } else {
-            //         const errorMessage = await response.text();
-            //         setAlertMessage(`Error: ${errorMessage}`);
-            //         setAlertType('Error');
-            //     }
-            // } catch (error) {
-            //     console.error('Error en la creación de reserva:', error);
-            //     setAlertMessage('Error al crear la reserva. Inténtalo de nuevo.');
-            //     setAlertType('Error');
-            // }
+                if (response.ok) {
+                    const result = await response.json();
+                    setAlertMessage(result); 
+                    setAlertType('Completado');
+                    setMostrarResumenPago(false);
+                    setMostrarConfirmacionCompra(true);
+                } else {
+                    const errorMessage = await response.text();
+                    setAlertMessage(`Error: ${errorMessage}`);
+                    setAlertType('Error');
+                }
+            } catch (error) {
+                console.error('Error en la creación de reserva:', error);
+                setAlertMessage('Error al crear la reserva. Inténtalo de nuevo.');
+                setAlertType('Error');
+            } finally {
+                setLoading(false); // Stop loading after completion
+            }
         };
 
     return (
@@ -690,6 +757,11 @@ const ReservaAsientos = () => {
                             <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={confirmarPago}>
                                 Confirmar Pago
                             </button>
+                            {loading && (
+                                <div className="flex justify-center items-center mt-4">
+                                    <div className="loader" /> {/* CSS class for loading circle */}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
