@@ -54,8 +54,13 @@ const MisReservas = () => {
                 setAlertType("success");
 
                 const userId = JSON.parse(localStorage.getItem("user")).id;
-                const reservasActualizadas = await fetch(`http://localhost:8080/api/reservation/misReservas/${userId}`);
-                setReservas(await reservasActualizadas.json());
+                const response = await fetch(`http://localhost:8080/api/reservation/misReservas/${userId}`);
+                const reservasCargadas = await response.json();
+                await fetch(`http://localhost:8080/api/reservation/actualizarReservas`, {
+                    method: 'GET',
+                });
+                const reservasPendientes = reservasCargadas.filter(reservas => reservas.status === 'Pendiente');
+                setReservas(reservasPendientes);
                 // Actualizar la lista de reservas sin la cancelada
                 //setReservas(prevReservas => prevReservas.filter(reserva => reserva.idReservation !== idReservation));
             } else {
