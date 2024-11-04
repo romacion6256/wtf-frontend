@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Layout from './Layout';
 import { useNavigate } from 'react-router-dom';
-
+import Alerta from '../elements/Alerta';
 
 
 const MetodoPago = () => {
@@ -11,6 +11,9 @@ const MetodoPago = () => {
     const [cvv, setCvv] = useState('');
     const [expiration_month, setExpirationMonth] = useState('');
     const [expiration_year, setExpirationYear] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
+    
 
 
     const fetchUserData = async (id) => {
@@ -40,11 +43,16 @@ const MetodoPago = () => {
                 parseInt(expiration_year) < currentYear ||
                 (parseInt(expiration_year) === currentYear && parseInt(expiration_month) < currentMonth)
             ) {
-                alert("La tarjeta ha expirado. Por favor, ingresa una tarjeta válida.");
+                setAlertMessage("La tarjeta ha expirado");
+                setAlertType("error");
                 return; // No envía la solicitud si la tarjeta está expirada
             }
-
-
+        
+            if (card_number==null || cvv==null || expiration_month==null || expiration_year==null){
+                setAlertMessage("Todos los campos son obligatorios");
+                setAlertType("error");
+                return;
+            }
             const userId = JSON.parse(localStorage.getItem("user")).id;
     
             const cardData = {
@@ -56,10 +64,13 @@ const MetodoPago = () => {
     
             await axios.put(`http://localhost:8080/api/users/${userId}/assign-card`, cardData);
     
-            alert("Tarjeta asignada con éxito al usuario");
+            
+            setAlertMessage("Tarjeta asignada con éxito");
+            setAlertType("Completado");
             console.log("Tarjeta asignada con éxito");
         } catch (error) {
-            alert("Error al asignar la tarjeta: algunos datos son inconsistentes");
+            setAlertMessage("Error al asignar la tarjeta");
+            setAlertType("error");
             console.error("Error al asignar la tarjeta:", error.response?.data || error.message);
         }
     };
@@ -94,7 +105,7 @@ const MetodoPago = () => {
                     <label className="block text-sm font-medium mb-1">Año de Vencimiento</label>
                     <input type="text" value={expiration_year} onChange={(e) => setExpirationYear(e.target.value)} className="w-full px-3 py-2 border rounded" />
                 </div>
-                
+                {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                 <button onClick={handleGuardar} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Guardar</button>
             </div>
         </Layout>

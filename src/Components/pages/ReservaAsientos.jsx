@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Layout from './Layout';
 import '../../index.css';
+import Alerta from '../elements/Alerta';
+import { useNavigate } from 'react-router-dom';
 
 const precioAsiento = 100;
 
@@ -18,6 +20,7 @@ const ReservaAsientos = () => {
     const [horaSeleccionada , setHoraSeleccionada] = useState('');
     const [formatoSeleccionado, setFormatoSeleccionado] = useState('');
     const [formatos, setFormatos] = useState([]);
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
 
@@ -313,16 +316,21 @@ const ReservaAsientos = () => {
         const confirmarPago = async () => {
             setLoading(true);
             console.log("Inicio de confirmarPago");
-            const cardData = JSON.parse(localStorage.getItem("user")).card.cardNumber;
+            const cardData = JSON.parse(localStorage.getItem("user")).card;
             
             console.log("Tarjeta", cardData);
-
 
             if (!cardData) {
                 // Si no hay tarjeta, mostrar alerta
                 console.log("No hay tarjeta");
                 setAlertMessage('Debes ingresar un método de pago.');
                 setAlertType('Atencion');
+                setLoading(false);
+                setTimeout(() => {
+                    navigate('/metodopago');
+                    setAlertMessage("");
+                    setAlertType("");
+                  }, 3000);
                 return;
             }
             
@@ -383,7 +391,7 @@ const ReservaAsientos = () => {
             }
 
             const reservationData = {
-                paymentMethod: 'tarjeta', 
+                paymentMethod: JSON.parse(localStorage.getItem("user")).card.cardNumber.toString(), 
                 seats: selectedSeats,
                 // rowSeat: parseInt(selectedSeats.split('-')[0]) + 1, // Ejemplo para obtener la fila del primer asiento
                 // columnSeat: parseInt(selectedSeats.split('-')[1]) + 1, // Ejemplo para obtener la columna del primer asiento
@@ -747,6 +755,7 @@ const ReservaAsientos = () => {
                             </ul>
                         </div>
                         <p className="font-bold">Total: ${totalPrecio + totalPrecioSnacks}</p>
+                        {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                         <div className="flex justify-end space-x-2 mt-4">
                             <button
                                 className="bg-gray-300 px-4 py-2"
