@@ -9,7 +9,8 @@ const MisReservas = () => {
     const [reservas, setReservas] = useState([]);
     const [snacksPopupVisible, setSnacksPopupVisible] = useState(false);
     const [snacksDetalle, setSnacksDetalle] = useState([]); // Estado para los detalles de los snacks
-
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [reservasPorFuncion, setReservasPorFuncion] = useState([]);
 
     const [cargandoReservas, setCargandoReservas] = useState(true); // Estado para controlar la carga
     const [alertMessage, setAlertMessage] = useState("");
@@ -37,6 +38,23 @@ const MisReservas = () => {
         };
         obtenerReservas();
     }, []);
+
+    const agruparReservasPorFuncion = () => {
+        const grupos = reservas.reduce((acc, reserva) => {
+            const { idFunction } = reserva.function;
+            if (!acc[idFunction]) {
+                acc[idFunction] = [];
+            }
+            acc[idFunction].push(reserva);
+            return acc;
+        }, {});
+        return Object.entries(grupos);
+    };
+    const handleEditarReservas = (reservasGrupo) => {
+        setReservasPorFuncion(reservasGrupo);
+        setPopupVisible(true);
+    };
+
 
     const handleCancelarReserva = async (idReservation) => {
         if (!idReservation) {
@@ -84,48 +102,77 @@ const MisReservas = () => {
 
     // Cierra el popup
     const handleClosePopup = () => {
+        setPopupVisible(false);
         setSnacksPopupVisible(false);
     };
 
     return (
         <Layout>
             <div className="p-4 bg-white rounded-lg shadow-md">
-                <h2 className="text-xl font-semibold mb-4">Mis Reservas</h2>
+
+            <h2 className="text-xl font-semibold mb-4">Mis Reservas </h2>
                 {cargandoReservas ? (
                     <div className="flex justify-center items-center" style={{ height: "100px" }}>
-                    <div className="loader" /> {/* Círculo de carga */}
-                </div>
+                        <div className="loader" />
+                    </div>
                 ) : reservas.length > 0 ? (
-                    <ul className="space-y-4">
-                        {reservas.map((reserva) => (
-                            <li key={reserva.idReservation} className="flex justify-between items-center border-b pb-2 mb-2">
-                                <div className="flex flex-col">
-                                    <span className="font-medium">{reserva.function.movie.movieName}</span>
-                                    <span className="text-gray-600">Sucursal: {reserva.function.room.branch.branchName}</span>
-                                    <span className="text-gray-600">Fecha: {reserva.function.date}</span>
-                                    <span className="text-gray-600">Hora: {reserva.function.time}</span>
-                                    <span className="text-gray-600">Formato: {reserva.function.format}</span>
-                                </div>
-                                <div className="flex space-x-2">
+                    agruparReservasPorFuncion().map(([idFunction, reservasGrupo]) => (
+                        <div key={idFunction} className="flex justify-between items-center border-b pb-2 mb-2">
+                            <div className="flex flex-col">
+                                <span className="font-medium">Película: {reservasGrupo[0].function.movie.movieName}</span>
+                                <span className="font-gray-600">Sucursal: {reservasGrupo[0].function.room.branch.branchName}</span>
+                                <span className="text-gray-600">Fecha: {reservasGrupo[0].function.date}</span>
+                                <span className="text-gray-600">Hora: {reservasGrupo[0].function.time}</span>
+                                <span className="text-gray-600">Formato: {reservasGrupo[0].function.format}</span>
+                                <span className="text-gray-600">Subtitulada: {reservasGrupo[0].function.subtitled ? 'Sí' : 'No'}</span>
+                            </div>
+                            <div className="flex space-x-2">
                                     <button 
-                                        onClick={() => handleVerSnacks(reserva.snacks)}
+                                        onClick={() => handleVerSnacks(reservasGrupo[0].snacks)}
                                         className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
                                         Ver Snacks
                                     </button>
                                     <button
-                                        onClick={() => handleCancelarReserva(reserva.idReservation)}
-                                        className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+                                        onClick={() => handleEditarReservas(reservasGrupo)}
+                                        className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
                                     >
-                                        Cancelar
+                                        Editar
                                     </button>
-                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>No hay reservas disponibles</p>
+                )}
+            </div>
+
+            {popupVisible && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-96 overflow-y-auto">
+                    <h3 className="text-xl font-semibold mb-4">Reservas para la función</h3>
+                    <ul className="space-y-2">
+                        {reservasPorFuncion.map((reserva) => (
+                            <li key={reserva.idReservation} className="flex justify-between items-center">
+                                <span>ID Reserva: {reserva.idReservation}</span>
+                                <span>Asiento: Fila {reserva.rowSeat}, Columna {reserva.columnSeat}</span>
+                                <button
+                                    onClick={() => handleCancelarReserva(reserva.idReservation)}
+                                    className="ml-4 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                >
+                                    Cancelar
+                                </button>
                             </li>
                         ))}
-                        </ul>
-                    ) : (
-                        <p>No hay Reservas disponibles</p>
-                    )}
+                    </ul>
+                    <button
+                        onClick={handleClosePopup}
+                        className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                        Cerrar
+                    </button>
+                </div>
             </div>
+        )}
             {/* Popup para mostrar los detalles de los snacks */}
             {snacksPopupVisible && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -152,6 +199,7 @@ const MisReservas = () => {
                     </div>
                 </div>
             )}
+
         </Layout>
     );
 };

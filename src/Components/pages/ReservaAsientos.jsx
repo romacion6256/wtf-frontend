@@ -237,6 +237,7 @@ const ReservaAsientos = () => {
                         const response = await fetch(`http://localhost:8080/api/function/obtenerSubtitulosDisponibles/${peliculaSeleccionada}/${sucursalSeleccionada}/${salaSeleccionada}/${fechaSeleccionada}/${horaSeleccionada}/${formatoSeleccionado}`);
                         const subsCargadas = await response.json();
                         setSubtitulada(Array.isArray(subsCargadas) ? subsCargadas : []);
+                        console.log(subtitulada)
                     } catch (error) {
                         console.error('Error al obtener los subtitulos disponibles:', error);
                         setSubtitulada([]);
@@ -248,8 +249,10 @@ const ReservaAsientos = () => {
 
         const obtenerAsientosReservados = useCallback(async () => {
             setCargandoAsientos(true); 
+            console.log(subtituladaSeleccionada);
             try {
                 const subtitledValue = subtituladaSeleccionada === 'Si';
+                console.log('subtitledValue:', subtitledValue); 
                 const params = new URLSearchParams({
                     movieName: peliculaSeleccionada,
                     branchName: sucursalSeleccionada,
@@ -349,6 +352,7 @@ const ReservaAsientos = () => {
             .join(","); // Filtrar snacks seleccionados
 
             console.log("Snacks seleccionados:", snacksIds);
+            const subtitledValue = subtituladaSeleccionada === 'Si';
 
             // Lógica para obtener el ID de la función
             const functionParams = new URLSearchParams({
@@ -358,7 +362,7 @@ const ReservaAsientos = () => {
                 date: fechaSeleccionada, 
                 time: horaSeleccionada, 
                 format: formatoSeleccionado, 
-                subtitled: subtituladaSeleccionada, 
+                subtitled: subtitledValue, 
             });
 
             let functionId;
