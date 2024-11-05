@@ -336,11 +336,23 @@ const ReservaAsientos = () => {
                   }, 3000);
                 return;
             }
-            
+
+            //verificar tarjeta expirada 
+            const today = new Date();
+            const currentMonth = today.getMonth() + 1; 
+            const currentYear = today.getFullYear();
+            if (
+                parseInt(cardData.expiration_year) < currentYear ||
+                (parseInt(cardData.expiration_year) === currentYear && parseInt(cardData.expiration_month) < currentMonth)
+            ) {
+                setAlertMessage("La tarjeta ha expirado");
+                setAlertType("error");
+                return; // No envía la solicitud si la tarjeta está expirada
+            }
             const clientId = JSON.parse(localStorage.getItem("user")).id;
             console.log("Client Id", clientId);
 
-            // Obtener los IDs de la función usando los parámetros necesarios
+            
             const selectedSeats = asientosSeleccionados.map(seat => {
                 const [row, column] = seat.split('-').map(Number);
                 return { rowSeat: row + 1, columnSeat: column + 1 }; // Ajustamos para que sea 1-based
@@ -354,7 +366,7 @@ const ReservaAsientos = () => {
             console.log("Snacks seleccionados:", snacksIds);
             const subtitledValue = subtituladaSeleccionada === 'Si';
 
-            // Lógica para obtener el ID de la función
+            
             const functionParams = new URLSearchParams({
                 movieName: peliculaSeleccionada, 
                 branchName: sucursalSeleccionada, 

@@ -81,6 +81,8 @@ const MisReservas = () => {
                 setReservas(reservasPendientes);
                 // Actualizar la lista de reservas sin la cancelada
                 //setReservas(prevReservas => prevReservas.filter(reserva => reserva.idReservation !== idReservation));
+
+                handleClosePopup();
             } else {
                 const errorMessage = await response.text();
                 setAlertMessage(errorMessage || "Error al cancelar la reserva.");
