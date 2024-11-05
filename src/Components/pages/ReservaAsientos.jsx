@@ -477,7 +477,7 @@ const ReservaAsientos = () => {
                             Reservar (${totalPrecio})
                         </button>
                     </div>
-)}
+                    )}
                 </div>
 
                 {/* Mitad derecha: formularios y matriz de asientos */}
@@ -578,10 +578,13 @@ const ReservaAsientos = () => {
                                 disabled={!salaSeleccionada}
                                 className="w-full p-2 border rounded"
                             >
-                                <option value=""disabled>Seleccionar Fecha</option>
-                                {fechas.map((fec, index) => (
-                                    <option key={index} value={fec}>{fec}</option>
-                                ))}
+                                <option value="" disabled>Seleccionar Fecha</option>
+                                {fechas
+                                    .filter(fec => new Date(fec) >= new Date()) // Filtrar fechas que no han pasado
+                                    .map((fec, index) => (
+                                        <option key={index} value={fec}>{fec}</option>
+                                    ))
+                                }
                             </select>
                         </div>
 

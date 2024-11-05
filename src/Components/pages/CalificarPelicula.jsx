@@ -2,6 +2,7 @@ import React, { useState , useEffect  } from 'react';
 import Layout from './Layout';
 import Rating from 'react-rating-stars-component';
 import axios from 'axios';
+import Alerta from '../elements/Alerta';
 
 const CalificarPelicula = () => {
     const [reservas, setReservas] = useState([]);
@@ -11,6 +12,8 @@ const CalificarPelicula = () => {
     const [reservasPorFuncion, setReservasPorFuncion] = useState([]);
     const [rating, setRating] = useState(0); 
     const [popupVisible, setPopupVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
 
     
 
@@ -18,6 +21,7 @@ const CalificarPelicula = () => {
         setSelectedMovie(movie);
         setIsOpen(true);
         setRating(0); 
+        console.log(movie);
     };
 
     const closeModal = () => {
@@ -56,18 +60,28 @@ const CalificarPelicula = () => {
 
     const submitRating = async (value) => {
         try {
-            const response = await axios.post(`/api/movie/calificar/${selectedMovie.idMovie}`, {
+            const response = await axios.patch(`http://localhost:8080/api/reservation/calificar/${selectedMovie.idReservation}`, {
                 puntuacion: value, // El nombre del campo en el payload debe coincidir con lo que se espera en el backend
             });
-
+        
             if (response.status === 200) {
-                console.log(`La película "${selectedMovie.movieName}" fue calificada con ${value} estrellas.`);
-                closeModal();
+                console.log(`La reserva con id "${selectedMovie.idReservation}" fue calificada con ${value} estrellas.`);
+                setAlertMessage('Calificación guardada con éxito');
+                setAlertType('Completado');
+                setTimeout(() => {
+                    setAlertMessage('');
+                    setAlertType('');
+                    closeModal();
+                  }, 3000);
             } else {
                 console.error('Error al guardar la calificación');
+                setAlertMessage('Error al guardar la calificación');
+                setAlertType('error');
             }
         } catch (error) {
             console.error('Error al conectar con el servidor:', error);
+            setAlertMessage('Error al conectar con el servidor');
+            setAlertType('error');
         }
     };
     const handleClosePopup = () => {
@@ -150,17 +164,20 @@ const CalificarPelicula = () => {
                 </div>
             </div>
         )}
-
                 {isOpen && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                         <div className="bg-white p-6 rounded-lg shadow-lg w-80">
                             <h3 className="text-lg font-semibold mb-4">Calificar</h3>
                             <Rating
                                 count={5}
-                                onChange={handleRating}  
+                                onChange={handleRating}
                                 size={30}
                                 activeColor="#ffd700"
                             />
+                            <div className="text-gray-600 mt-2">
+                                Ultima calificación: {selectedMovie?.rating || 'Sin calificar'}
+                            </div>
+                            {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                             <button
                                 onClick={closeModal}
                                 className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
