@@ -59,7 +59,7 @@ const RankingPeliculas = () => {
                                             <strong>Título: </strong>{pelicula.movieName}
                                         </div>
                                         <div className="mb-1">
-                                            <strong>Calificación: </strong>{pelicula.puntuacion}
+                                            <strong>Calificación: </strong>{pelicula.puntuacion} / 5
                                         </div>
                                     </div>
                                 </div>
