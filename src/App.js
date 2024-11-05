@@ -16,6 +16,7 @@ import CalificarPelicula from './Components/pages/CalificarPelicula';
 import { UserProvider } from './Components/UserContext'; 
 import AuthenticatedRoute from './Components/AuthenticatedRoute';
 import MetodoPago from "./Components/pages/MetodoPago";
+import RankingPeliculas from "./Components/pages/RankingPeliculas";
 
 
 const App = () => {
@@ -61,6 +62,10 @@ const App = () => {
             <Route 
               path="/agregaradmin" 
               element={<AuthenticatedRoute element={<AgregarAdmin />} roles={['ADMIN']} />} 
+            />
+            <Route 
+              path="/rankingpeliculas" 
+              element={<AuthenticatedRoute element={<RankingPeliculas />} roles={['ADMIN']} />} 
             />
             <Route 
               path="/agregarpelicula" 
