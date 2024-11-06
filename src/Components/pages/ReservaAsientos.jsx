@@ -86,7 +86,15 @@ const ReservaAsientos = () => {
     const puedeSeleccionarAsientos = peliculaSeleccionada && sucursalSeleccionada && fechaSeleccionada && horaSeleccionada && formatoSeleccionado && subtituladaSeleccionada;
     const totalAsientosSeleccionados = asientosSeleccionados.length;
     const totalPrecio = totalAsientosSeleccionados * precioAsiento;
+    const totalPrecioSnacks = snacks.reduce((acc, snack) => {
+        return acc + (cantidadSnacks[snack.snackId] || 0) * snack.price;
+    }, 0);
 
+    const fechaInicio = new Date('2024-11-01T00:00:00');
+    const fechaFin = new Date('2025-06-01T00:00:00'); // Fecha de finalización después de 6 meses
+    const fechaActual = new Date();
+    const descuento = (fechaActual >= fechaInicio && fechaActual < fechaFin) ? totalAsientosSeleccionados * precioAsiento : 0;
+    const totalConDescuento = totalPrecio + totalPrecioSnacks - descuento;
     const mostrarPopup = sucursalSeleccionada && fechaSeleccionada && horaSeleccionada && formatoSeleccionado && subtituladaSeleccionada && asientosSeleccionados.length > 0;
 
     const aumentarCantidad = (id) => {
@@ -102,9 +110,7 @@ const ReservaAsientos = () => {
         }));
     };
 
-    const totalPrecioSnacks = snacks.reduce((acc, snack) => {
-        return acc + (cantidadSnacks[snack.snackId] || 0) * snack.price;
-    }, 0);
+
 
     const reservarAsientos = () => {
         // Mostrar el popup para agregar snacks
@@ -773,7 +779,8 @@ const ReservaAsientos = () => {
                                     ))}
                             </ul>
                         </div>
-                        <p className="font-bold">Total: ${totalPrecio + totalPrecioSnacks}</p>
+                        <p className="font-bold">Descuentos: {descuento > 0 ? ` -$${descuento}` : 'N/A'}</p>
+                        <p className="font-bold">Total: ${totalConDescuento}</p>
                         {alertMessage && <Alerta message={alertMessage} type={alertType} />}
                         <div className="flex justify-end space-x-2 mt-4">
                             <button
@@ -824,7 +831,7 @@ const ReservaAsientos = () => {
                                 const [fila, columna] = asiento.split('-');
                                 return `Fila ${parseInt(fila) + 1}, Asiento ${parseInt(columna) + 1}`;
                             }).join(', ')}</p>
-                            <p>Total: ${totalPrecio + totalPrecioSnacks}</p>
+                            <p>Total: ${totalConDescuento}</p>
                             <button
                                 className="bg-blue-500 text-white py-2 px-4 mt-4"
                                 onClick={() => window.location.href = '/misreservas'}
