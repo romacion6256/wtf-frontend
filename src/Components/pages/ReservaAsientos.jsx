@@ -189,6 +189,7 @@ const ReservaAsientos = () => {
                     const response = await fetch(`http://localhost:8080/api/function/obtenerFechasDisponibles/${peliculaSeleccionada}/${sucursalSeleccionada}/${salaSeleccionada}`);
                     const fechasCargadas = await response.json();
                     setFechas(Array.isArray(fechasCargadas) ? fechasCargadas : []);
+                    console.log(fechas)
                 } catch (error) {
                     console.error('Error al obtener las fechas disponibles:', error);
                     setFechas([]);
@@ -585,12 +586,15 @@ const ReservaAsientos = () => {
                                 className="w-full p-2 border rounded"
                             >
                                 <option value="" disabled>Seleccionar Fecha</option>
-                                {fechas
+                                {fechas.map((hor, index) => (
+                                    <option key={index} value={hor}>{hor}</option>
+                                ))}
+                                {/* {fechas
                                     .filter(fec => new Date(fec) >= new Date()) // Filtrar fechas que no han pasado
                                     .map((fec, index) => (
                                         <option key={index} value={fec}>{fec}</option>
                                     ))
-                                }
+                                } */}
                             </select>
                         </div>
 

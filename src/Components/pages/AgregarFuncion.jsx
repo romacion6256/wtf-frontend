@@ -22,7 +22,7 @@ const AgregarFuncion = () => {
     const [funciones, setFunciones] = useState([]);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertType, setAlertType] = useState("");
-
+    const [precio, setPrecio] = useState('');
 
     const sub = ['Si', 'No'];
 
@@ -112,7 +112,7 @@ const AgregarFuncion = () => {
 
     const handleGuardarFuncion = async () => {
         // Verifica si alguno de los valores es null o vacío
-        if (!peliculaSeleccionada || !Formato || !salaSeleccionada || !sucursalSeleccionada || !Fecha || !Hora || !Subtitulada) {
+        if (!peliculaSeleccionada || !Formato || !salaSeleccionada || !sucursalSeleccionada || !Fecha || !Hora || !Subtitulada || !precio) {
             setAlertMessage('Por favor, completa todos los campos antes de guardar la función.');
             setAlertType('Atencion');
             return; // Detiene la ejecución si hay campos vacíos
@@ -130,6 +130,7 @@ const AgregarFuncion = () => {
             date: Fecha,
             time: Hora,
             subtitled: Subtitulada === "Si",
+            price: precio,
 
         };
     
@@ -231,6 +232,9 @@ const AgregarFuncion = () => {
                                             </div>
                                             <div className="mb-1">
                                                 <strong>Subtitulada: </strong>{funcion.subtitled ? 'Sí' : 'No'}
+                                            </div>
+                                            <div className="mb-1">
+                                                <strong>Precio: </strong>{funcion.price}
                                             </div>
                                         </div>
                                         <button
@@ -341,6 +345,16 @@ const AgregarFuncion = () => {
                             <option key={index} value={subtitle}>{subtitle}</option>
                         ))}
                     </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">Precio ($)</label>
+                    <input
+                        type="number"
+                        value={precio}
+                        onChange={(e) => setPrecio(e.target.value)}
+                        className="w-full px-3 py-2 border rounded"
+                        placeholder="Ejemplo: 200"
+                    />
                 </div>
             </div>
             {alertMessage && <Alerta message={alertMessage} type={alertType} />}
