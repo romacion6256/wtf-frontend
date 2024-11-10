@@ -279,6 +279,49 @@ const ReservaAsientos = () => {
     
                 const data = await response.json();
                 setAsientosReservados(data);
+
+                const functionParams = new URLSearchParams({
+                    movieName: peliculaSeleccionada, 
+                    branchName: sucursalSeleccionada, 
+                    roomNumber: salaSeleccionada, 
+                    date: fechaSeleccionada, 
+                    time: horaSeleccionada, 
+                    format: formatoSeleccionado, 
+                    subtitled: subtitledValue, 
+                });
+    
+                let functionId;
+                try {
+                    const response = await fetch(`http://localhost:8080/api/function/obtenerIdFuncion?${functionParams.toString()}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        
+                    });
+    
+                    console.log("Respuesta de obtenerIdFuncion:", response);
+    
+                    if (response.ok) {
+                        const result = await response.json();
+                        const { idFunction, price } = result;
+                        functionId = idFunction;
+                        setprecioAsiento(price); // Guardamos el ID de la función
+                        console.log("ID de función obtenido:", functionId);
+                        console.log("Precio de la función obtenido:", price);
+                    } else {
+                        const errorMessage = await response.text();
+                        setAlertMessage(`Error al obtener ID de la función: ${errorMessage}`);
+                        setAlertType('Error');
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error al obtener ID de la función:', error);
+                    setAlertMessage('Error al obtener ID de la función. Inténtalo de nuevo.');
+                    setAlertType('Error');
+                    return;
+                }
+
             } catch (error) {
                 console.error('Error al obtener los asientos reservados:', error);
             } finally {
