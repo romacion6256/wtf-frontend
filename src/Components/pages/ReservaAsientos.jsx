@@ -4,7 +4,7 @@ import '../../index.css';
 import Alerta from '../elements/Alerta';
 import { useNavigate } from 'react-router-dom';
 
-const precioAsiento = 100;
+//const precioAsiento = 100;
 
 
 const ReservaAsientos = () => {
@@ -29,7 +29,7 @@ const ReservaAsientos = () => {
     const [snacks, setSnacks] = useState([]);
     const [cargandoSnacks, setCargandoSnacks] = useState(true); 
     const [cargandoAsientos, setCargandoAsientos] = useState(false);
-
+    const [precioAsiento,setprecioAsiento] = useState(0);
     //const [titulo, setTitulo] = useState('');
     //const [sucursal, setSucursal] = useState('');
     //const [fecha, setFecha] = useState('');
@@ -398,8 +398,11 @@ const ReservaAsientos = () => {
 
                 if (response.ok) {
                     const result = await response.json();
-                    functionId = result; // Guardamos el ID de la función
+                    const { idFunction, price } = result;
+                    functionId = idFunction;
+                    setprecioAsiento(price); // Guardamos el ID de la función
                     console.log("ID de función obtenido:", functionId);
+                    console.log("Precio de la función obtenido:", price);
                 } else {
                     const errorMessage = await response.text();
                     setAlertMessage(`Error al obtener ID de la función: ${errorMessage}`);
@@ -586,8 +589,8 @@ const ReservaAsientos = () => {
                                 className="w-full p-2 border rounded"
                             >
                                 <option value="" disabled>Seleccionar Fecha</option>
-                                {fechas.map((hor, index) => (
-                                    <option key={index} value={hor}>{hor}</option>
+                                {fechas.map((fec, index) => (
+                                    <option key={index} value={fec}>{fec}</option>
                                 ))}
                                 {/* {fechas
                                     .filter(fec => new Date(fec) >= new Date()) // Filtrar fechas que no han pasado
