@@ -466,7 +466,8 @@ const ReservaAsientos = () => {
                 // columnSeat: parseInt(selectedSeats.split('-')[1]) + 1, // Ejemplo para obtener la columna del primer asiento
                 idFunction: functionId, // <-- hay que OBTENERLO
                 idClient: clientId,
-                snackIds: snacksIds 
+                snackIds: snacksIds,
+                monto: totalConDescuento,
             };
             
             console.log("Datos de reserva a enviar:", reservationData); 
@@ -488,7 +489,7 @@ const ReservaAsientos = () => {
                     setMostrarConfirmacionCompra(true);
                 } else {
                     const errorMessage = await response.text();
-                    setAlertMessage(`Error: ${errorMessage}`);
+                    setAlertMessage(`Error al realizar la reserva`);
                     setAlertType('Error');
                 }
             } catch (error) {

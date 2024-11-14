@@ -5,6 +5,10 @@ import '../../index.css';
 const Cartelera = () => {
     const [peliculas, setPeliculas] = useState([]);
     const [cargando, setCargando] = useState(true);
+    const [peliculaSeleccionada, setPeliculaSeleccionada] = useState(null);
+    const [cargandoPeliculas, setCargandoPeliculas] = useState(true); // Estado para controlar la carga
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("");
 
     // Obtener películas
     useEffect(() => {
@@ -21,6 +25,37 @@ const Cartelera = () => {
         };
         obtenerPeliculas();
     }, []);
+
+    // Obtener películas y actualizar puntuaciones
+    useEffect(() => {
+        const actualizarPuntuacionesYObtenerPeliculas = async () => {
+            setCargandoPeliculas(true); 
+
+            try {
+                // Llama al endpoint para actualizar las puntuaciones
+                await fetch('http://localhost:8080/api/movie/actualizarPuntuaciones', {
+                    method: 'POST',
+                });
+
+                // Después de actualizar, obtén todas las películas
+                const response = await fetch('http://localhost:8080/api/movie/obtenerTodas');
+                const peliculasCargadas = await response.json();
+                setPeliculas(peliculasCargadas);
+            } catch (error) {
+                console.error('Error al obtener las películas:', error);
+                setAlertMessage("Hubo un error al cargar las películas");
+                setAlertType("error");
+            } finally {
+                setCargandoPeliculas(false); // Termina el cargador
+            }
+        };
+        actualizarPuntuacionesYObtenerPeliculas();
+    }, []);
+
+    const seleccionarPelicula = (pelicula) => {
+        setPeliculaSeleccionada(pelicula);
+        console.log("pelicula seleccionada",pelicula);
+    };
 
     return (
         <Layout active="cartelera">
@@ -44,10 +79,33 @@ const Cartelera = () => {
                             key={pelicula.idMovie} // Usa un key único por cada película
                             className="bg-gray-200 p-4 rounded-lg flex items-center justify-center"
                             style={{ height: "200px" }}
+                            onClick={() => seleccionarPelicula(pelicula)}
                         >
                             {pelicula.movieName} {/* Muestra el nombre de la película */}
                         </div>
                     ))}
+                </div>
+            )}
+
+            {/* Modal de la película seleccionada */}
+            {peliculaSeleccionada && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-4 max-w-lg w-full">
+                        <h3 className="text-xl font-semibold mb-4">
+                            {peliculaSeleccionada.movieName}
+                        </h3>
+                        <p className="mb-4">Genero: {peliculaSeleccionada.genre.name}</p>
+                        <p className="mb-4">Director: {peliculaSeleccionada.directorName}</p>
+                        <p className="mb-4">Duración: {peliculaSeleccionada.duration}</p>
+                        <p className="mb-4">Año de estreno: {peliculaSeleccionada.year}</p>
+                        <p className="mb-4">Puntuación promedio: {peliculaSeleccionada.puntuacion}/5</p>
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                            onClick={() => setPeliculaSeleccionada(null)}
+                        >
+                            Cerrar
+                        </button>
+                    </div>
                 </div>
             )}
         </Layout>
