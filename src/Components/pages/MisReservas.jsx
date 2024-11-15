@@ -8,7 +8,7 @@ const MisReservas = () => {
     // Ejemplo de reservas solo para visualización
     const [reservas, setReservas] = useState([]);
     const [snacksPopupVisible, setSnacksPopupVisible] = useState(false);
-    const [snacksDetalle, setSnacksDetalle] = useState([]); // Estado para los detalles de los snacks
+    // const [snacksDetalle, setSnacksDetalle] = useState([]); // Estado para los detalles de los snacks
     const [popupVisible, setPopupVisible] = useState(false);
     const [reservasPorFuncion, setReservasPorFuncion] = useState([]);
 
@@ -97,15 +97,15 @@ const MisReservas = () => {
         }
     };
 
-    const handleVerSnacks = (snacks) => {
-        setSnacksDetalle(snacks);
-        setSnacksPopupVisible(true);
-    };
+    // const handleVerSnacks = (snacks) => {
+    //     setSnacksDetalle(snacks);
+    //     setSnacksPopupVisible(true);
+    // };
 
     // Cierra el popup
     const handleClosePopup = () => {
         setPopupVisible(false);
-        setSnacksPopupVisible(false);
+        //setSnacksPopupVisible(false);
     };
 
     return (
@@ -129,11 +129,6 @@ const MisReservas = () => {
                                 <span className="text-gray-600">Subtitulada: {reservasGrupo[0].function.subtitled ? 'Sí' : 'No'}</span>
                             </div>
                             <div className="flex space-x-2">
-                                    <button 
-                                        onClick={() => handleVerSnacks(reservasGrupo[0].snacks)}
-                                        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-                                        Ver Snacks
-                                    </button>
                                     <button
                                         onClick={() => handleEditarReservas(reservasGrupo)}
                                         className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
@@ -175,7 +170,7 @@ const MisReservas = () => {
                 </div>
             </div>
         )}
-            {/* Popup para mostrar los detalles de los snacks */}
+            {/* Popup para mostrar los detalles de los snacks
             {snacksPopupVisible && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
@@ -200,7 +195,7 @@ const MisReservas = () => {
                         </button>
                     </div>
                 </div>
-            )}
+            )} */}
 
         </Layout>
     );
