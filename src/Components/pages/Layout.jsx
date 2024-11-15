@@ -57,26 +57,36 @@ const Layout = ({ children }) => {
                 {/* Nombre de usuario */}
                 <div className="relative flex items-center space-x-2">
                 {!loading && (
-                    <button className="flex items-center" onClick={toggleProfile}>
-                            {user ? (
-                        <span>Hola, {user.userName}</span>
-                        ) : (
-                        <button onClick={handleLoginRedirect}>Log In</button>
-                        )}
+                    <button className="flex items-center space-x-2" onClick={toggleProfile}>
+                    {user ? (
+                        <>
+                        {/* Emoji de persona */}
+                        <span className="text-gray-600 text-xl">👤</span>
+                        {/* Texto de bienvenida */}
+                        <span className="text-gray-700 font-medium">Hola, {user.userName}</span>
+                        </>
+                    ) : (
+                        <button
+                        onClick={handleLoginRedirect}
+                        className="text-blue-500 hover:text-blue-700"
+                        >
+                        Log In
+                        </button>
+                    )}
                     </button>
                 )}
-                    {profileOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
-                            <a
-                                href="/misdatos"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            >
-                                Mis Datos
-                            </a>
-                        
-                        </div>
-                    )}
+                {profileOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+                    <a
+                        href="/misdatos"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                        Mis Datos
+                    </a>
+                    </div>
+                )}
                 </div>
+
             </header>
 
             <div className="flex">
