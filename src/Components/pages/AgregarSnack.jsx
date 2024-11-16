@@ -55,13 +55,13 @@ const AgregarSnack = () => {
                 setSnacks(await snacksActualizadas.json());
             } else {
                 console.error('Error al agregar la snack');
+                setAlertMessage('Error al agregar la snack');
+                setAlertType('Error');
             }
         } catch (error) {
             console.error('Error en la solicitud:', error);
         } finally {
-            handleCerrarPopup();
-            setCargandoSnacks(false); // Finaliza el cargador tras obtener o fallar
-           
+            setCargandoSnacks(false); // Finaliza el cargador tras obtener o fallar          
         } 
     };
     

@@ -98,13 +98,13 @@ const AgregarPelicula = () => {
                 setPeliculas(await peliculasActualizadas.json());
             } else {
                 console.error('Error al agregar la película');
+                setAlertMessage('Error al agregar la película');
+                setAlertType('Error');
             }
         } catch (error) {
             console.error('Error en la solicitud:', error);
         } finally {
-            handleCerrarPopup();
             setCargandoPeliculas(false); // Finaliza el cargador tras obtener o fallar
-           
         }
         
     };
