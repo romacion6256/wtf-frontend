@@ -41,6 +41,15 @@ const MisDatos = () => {
     };
 
     const handleGuardar = async () => {
+        
+        if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(contrasenia)) {
+            setAlertMessage(
+              "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número"
+            );
+            setAlertType("Atencion");
+            return;
+        }
+
         try {
             const userId = JSON.parse(localStorage.getItem("user")).id;
             const cambios = {

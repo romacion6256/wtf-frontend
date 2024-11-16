@@ -53,6 +53,13 @@ const MetodoPago = () => {
                 setAlertType("error");
                 return;
             }
+
+            if (card_number.length !== 16){
+                setAlertMessage("El número de tarjeta debe tener 16 dígitos");
+                setAlertType("error");
+                return;
+            }
+            
             const userId = JSON.parse(localStorage.getItem("user")).id;
     
             const cardData = {
