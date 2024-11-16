@@ -462,12 +462,10 @@ const ReservaAsientos = () => {
             const reservationData = {
                 paymentMethod: JSON.parse(localStorage.getItem("user")).card.cardNumber.toString(), 
                 seats: selectedSeats,
-                // rowSeat: parseInt(selectedSeats.split('-')[0]) + 1, // Ejemplo para obtener la fila del primer asiento
-                // columnSeat: parseInt(selectedSeats.split('-')[1]) + 1, // Ejemplo para obtener la columna del primer asiento
-                idFunction: functionId, // <-- hay que OBTENERLO
+                idFunction: functionId, 
                 idClient: clientId,
                 snackIds: snacksIds,
-                monto: totalConDescuento,
+                //monto: totalConDescuento,
             };
             
             console.log("Datos de reserva a enviar:", reservationData); 
