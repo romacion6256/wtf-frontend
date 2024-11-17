@@ -182,7 +182,6 @@ const LoginSignup = () => {
                 </div>
                 </div>
                 {alertMessage && <Alerta message={alertMessage} type={alertType} />}
-                {action==="Sign Up"?<div></div>:<div className="forgot-password"><span>Olvide mi contrasena </span></div>}
                 <div className="enter-container">
                     {action==="Log In"?<div className="enter" onClick={handleLogin}>Ingresa</div>: <div></div>}
                     {action==="Sign Up"?<div className="enter" onClick={handleRegister}>Crear</div>: <div></div>}    
